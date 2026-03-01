@@ -12,7 +12,7 @@ const runPowerShell = (script, args, timeout = 30000) => powershell.execute(scri
 module.exports = {
     schema: z.object({}),
     name: 'getSystemInfo',
-    description: 'Get CPU, RAM, battery, and uptime info',
+    description: 'Reports a real-time snapshot of system health: current CPU load percentage, RAM used vs total in GB, battery charge percentage (or N/A on desktops), and how long the system has been running since last reboot. Use when the user asks how the PC is performing, checks battery level, asks about RAM or CPU usage, or wants a general hardware status summary.',
     tags: ['system', 'info', 'monitor'],
 
     returnType: 'data',

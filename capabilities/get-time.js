@@ -9,7 +9,7 @@ const { z } = require('zod');
 module.exports = {
     schema: z.object({}),
     name: 'getTime',
-    description: 'Get the current date and time',
+    description: 'Returns the current local time and full date including day of the week. Use when the user asks what time it is, today\'s date, what day it is, or any question about the current moment.',
     tags: ['time', 'date'],
 
     returnType: 'data',

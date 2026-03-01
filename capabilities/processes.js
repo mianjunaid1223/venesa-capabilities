@@ -12,7 +12,7 @@ const runPowerShell = (script, args, timeout = 30000) => powershell.execute(scri
 module.exports = {
     schema: z.object({}),
     name: 'listProcesses',
-    description: 'List top 10 CPU-heavy processes',
+    description: 'Lists the top 10 processes consuming the most CPU, showing process ID, name, CPU time, and memory usage in bytes. Use when the user asks what is slowing the PC down, which processes are running, what is consuming CPU, or wants to identify resource hogs.',
     tags: ['system', 'processes'],
 
     returnType: 'data',

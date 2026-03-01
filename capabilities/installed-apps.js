@@ -12,7 +12,7 @@ const runPowerShell = (script, args, timeout = 30000) => powershell.execute(scri
 module.exports = {
     schema: z.object({}),
     name: 'getInstalledApps',
-    description: 'List installed applications',
+    description: 'Scans the Windows registry and returns up to 50 installed programs with their name, version, and publisher. Use when the user asks what software is installed, whether a specific program exists on the PC, or wants a list of installed applications.',
     tags: ['app', 'installed', 'list'],
 
     returnType: 'data',

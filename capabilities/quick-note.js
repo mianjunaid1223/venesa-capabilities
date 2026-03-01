@@ -34,7 +34,7 @@ function saveNotes(notes) {
 
 module.exports = {
     name: 'quickNote',
-    description: 'Save and retrieve quick notes. Operations: add, list, search, delete, clear',
+    description: 'Persistently saves and retrieves short text notes using the memory system. Supports five operations: add (save a new note), list (show all notes), search (find notes by keyword), delete (remove a note by index), clear (wipe all notes). Use whenever the user wants to save, recall, find, or delete a note or reminder.',
     tags: ['note', 'memo', 'reminder', 'save', 'write'],
 
     returnType: 'hybrid',

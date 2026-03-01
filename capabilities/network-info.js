@@ -12,7 +12,7 @@ const runPowerShell = (script, args, timeout = 30000) => powershell.execute(scri
 module.exports = {
     schema: z.object({}),
     name: 'getNetworkInfo',
-    description: 'Get network adapter and IP address info',
+    description: 'Returns all active network adapters and their IPv4 addresses. Use when the user asks for their IP address, which network or adapter they are connected to, their network speed, or wants to see connection details.',
     tags: ['system', 'network', 'wifi'],
 
     returnType: 'data',

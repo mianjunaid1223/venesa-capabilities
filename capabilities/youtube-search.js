@@ -11,7 +11,7 @@ const { shell } = require('electron');
 module.exports = {
     schema: z.object({ query: z.string().trim().min(1).describe('The search query') }),
     name: 'youtubeSearch',
-    description: 'Search YouTube for a query and open results in browser',
+    description: 'Opens the YouTube search results page in the default browser for a given search query. Use when the user asks to search, find, watch, or look up anything on YouTube. Requires a non-empty search query.',
     tags: ['web', 'search', 'youtube', 'video'],
 
     returnType: 'action',

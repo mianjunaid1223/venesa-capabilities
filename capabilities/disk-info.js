@@ -12,7 +12,7 @@ const runPowerShell = (script, args, timeout = 30000) => powershell.execute(scri
 module.exports = {
     schema: z.object({}),
     name: 'getDiskInfo',
-    description: 'Get disk usage information',
+    description: 'Shows all fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.',
     tags: ['system', 'disk', 'storage'],
     returnType: 'data',
     marker: 'silently',

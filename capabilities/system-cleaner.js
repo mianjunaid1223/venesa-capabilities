@@ -11,7 +11,7 @@ const runPowerShell = (script, args, timeout = 30000) => powershell.execute(scri
 
 module.exports = {
     name: 'systemCleaner',
-    description: 'Clean temp files, browser caches, recycle bin. Recovers disk space. Operations: scan, clean, empty-recycle-bin',
+    description: 'Frees up disk space by removing junk files from Windows Temp, System Temp, thumbnails, Chrome cache, and Edge cache. Three operations: scan (preview how much space can be recovered without deleting anything), clean (permanently delete the junk files and report freed MB), empty-recycle-bin (immediately empty the Recycle Bin). Use when the user wants to clean up, free space, or remove temporary files.',
     tags: ['clean', 'temp', 'cache', 'recycle', 'space', 'junk'],
 
     returnType: 'hybrid',

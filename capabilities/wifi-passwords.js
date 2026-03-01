@@ -12,7 +12,7 @@ const runPowerShell = (script, args, timeout = 30000) => powershell.execute(scri
 
 module.exports = {
     name: 'wifiPasswords',
-    description: 'Retrieve saved WiFi passwords. Use without params to list all networks, or specify a network name.',
+    description: 'Retrieves saved WiFi network credentials stored on this Windows PC. Without a network name, returns a list of all saved networks and whether each has a password. With a network name, confirms whether a password is saved for that specific network. Passwords are returned redacted for security. Use when the user asks what WiFi networks are saved, or wants to check a saved network.',
     tags: ['wifi', 'password', 'network', 'internet'],
 
     returnType: 'data',

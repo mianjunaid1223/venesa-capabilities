@@ -12,7 +12,7 @@ const runPowerShell = (script, args, timeout = 30000) => powershell.execute(scri
 module.exports = {
     schema: z.object({}),
     name: 'listRunningApps',
-    description: 'List currently running visible applications',
+    description: 'Lists all applications with a visible window currently open on the desktop, showing app name, window title, and memory usage in MB. Background services and system processes are excluded. Use when the user asks what apps or windows are open right now.',
     tags: ['system', 'apps', 'running'],
 
     returnType: 'data',

@@ -11,7 +11,7 @@ const { shell } = require('electron');
 module.exports = {
     schema: z.object({ location: z.string().optional() }),
     name: 'getWeather',
-    description: 'Open weather information for a location',
+    description: 'Opens a live Google weather search in the browser for a given city or location. Use when the user asks about the current weather, temperature, forecast, or conditions for any place. Accepts an optional location; defaults to generic weather if none is given.',
     tags: ['weather', 'forecast'],
 
     returnType: 'action',
