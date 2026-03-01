@@ -39,7 +39,7 @@ module.exports = {
             ? `
 param($NetName)
 $profile = netsh wlan show profile name="$NetName" key=clear 2>&1
-$keyLine = ($profile | Where-Object { $_ -match ':\\s' } | Where-Object { $_ -match 'Key Content|Contenu de la|Schlüsselinhalt|Contenido de la clave|Clé de sécurité' }) -replace '.*:\\s*', ''
+$keyLine = ($profile | Where-Object { $_ -match 'Key Content|Contenu de la|Schlüsselinhalt|Contenido de la clave|Clé de sécurité' } | Select-Object -First 1) -replace '.*:\s*', ''
 if (-not $keyLine) {
     $keyLine = 'UNKNOWN'
 }
@@ -66,7 +66,7 @@ $profiles = $profiles | Where-Object { $_.Length -gt 1 -and $_ -notmatch 'Versio
 $results = @()
 foreach ($p in $profiles) {
     $detail = netsh wlan show profile name="$p" key=clear 2>&1
-    $key = ($detail | Where-Object { $_ -match 'Key Content|Contenu de la|Schlüsselinhalt|Contenido de la clave|Clé de sécurité' }) -replace '.*:\\s*', ''
+    $key = ($detail | Where-Object { $_ -match 'Key Content|Contenu de la|Schlüsselinhalt|Contenido de la clave|Clé de sécurité' } | Select-Object -First 1) -replace '.*:\s*', ''
     if (-not $key) { $key = $null }
     $results += @{ network = $p; hasPassword = [bool]$key; password = if ($key) { '***REDACTED***' } else { '(open/enterprise)' } }
 }

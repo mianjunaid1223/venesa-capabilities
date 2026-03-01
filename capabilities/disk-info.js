@@ -5,28 +5,27 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-const { z } = require('zod');
-const powershell = require('../src/lib/powershell');
-const runPowerShell = (script, args, timeout = 30000) => powershell.execute(script, args || [], timeout);
+const { z } = require("zod");
+const powershell = require("../src/lib/powershell");
+const runPowerShell = (script, args, timeout = 30000) =>
+  powershell.execute(script, args || [], timeout);
 
 module.exports = {
-    schema: z.object({}),
-    name: 'getDiskInfo',
-    description: 'Shows all fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.',
-    tags: ['system', 'disk', 'storage'],
-    returnType: 'data',
-    marker: 'silently',
-    ui: 'key-value',
+  schema: z.object({}),
+  name: "getDiskInfo",
+  description:
+    "Shows all fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
+  tags: ["system", "disk", "storage"],
+  returnType: "data",
+  marker: "silently",
+  ui: "key-value",
 
-    examples: [
+  examples: [
+    { user: "how much disk space do I have", action: "[action: getDiskInfo]" },
+  ],
 
-        { user: 'how much disk space do I have', action: '[action: getDiskInfo]' },
-
-    ],
-
-
-    async handler() {
-        const psScript = `
+  async handler() {
+    const psScript = `
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 @(Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3" |
@@ -36,10 +35,10 @@ Select-Object DeviceID,
   @{N='UsedPercent';E={if($_.Size -gt 0){[math]::round((($_.Size-$_.FreeSpace)/$_.Size)*100,1)}else{0}}}) |
 ConvertTo-Json -Compress
 `;
-        try {
-            return await runPowerShell(psScript, [], 10000);
-        } catch (e) {
-            return JSON.stringify({ error: e.message });
-        }
-    },
+    try {
+      return await runPowerShell(psScript, [], 10000);
+    } catch (e) {
+      return JSON.stringify({ error: e.message });
+    }
+  },
 };
