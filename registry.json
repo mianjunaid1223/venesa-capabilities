@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-01T17:02:39.494Z",
+  "generated": "2026-03-01T18:31:40.603Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -8,7 +8,6 @@
     {
       "name": "getDiskInfo",
       "description": "Shows all fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
-      "version": null,
       "returnType": "data",
       "tags": [
         "system",
@@ -18,6 +17,8 @@
       "ui": "key-value",
       "marker": "silently",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "a21fb1e5ad811fbfcc16d4cb4bfa860ebd20befb47d6cd4ab8a52e3054504759",
       "file": "disk-info.js",
       "path": "capabilities/disk-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/disk-info.js"
@@ -25,7 +26,6 @@
     {
       "name": "getTime",
       "description": "Returns the current local time and full date including day of the week. Use when the user asks what time it is, today's date, what day it is, or any question about the current moment.",
-      "version": null,
       "returnType": "data",
       "tags": [
         "time",
@@ -34,6 +34,8 @@
       "ui": null,
       "marker": "silently",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "8909e263f8b32f288f46e2bdbaada6a329b26555671da80bfeb9d60c4298e137",
       "file": "get-time.js",
       "path": "capabilities/get-time.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/get-time.js"
@@ -41,7 +43,6 @@
     {
       "name": "getWeather",
       "description": "Opens a live Google weather search in the browser for a given city or location. Use when the user asks about the current weather, temperature, forecast, or conditions for any place. Accepts an optional location; defaults to generic weather if none is given.",
-      "version": null,
       "returnType": "action",
       "tags": [
         "weather",
@@ -50,6 +51,8 @@
       "ui": null,
       "marker": "announce",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "b5ed5c57659f78b2cea7115801fe6bb4c1501aa6bb3568234d5fb3f8de92de92",
       "file": "get-weather.js",
       "path": "capabilities/get-weather.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/get-weather.js"
@@ -57,7 +60,6 @@
     {
       "name": "getInstalledApps",
       "description": "Scans the Windows registry and returns up to 50 installed programs with their name, version, and publisher. Use when the user asks what software is installed, whether a specific program exists on the PC, or wants a list of installed applications.",
-      "version": null,
       "returnType": "data",
       "tags": [
         "app",
@@ -67,6 +69,8 @@
       "ui": "card-list",
       "marker": "silently",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "2a9a35efb86c6bfd9f0215a28f53e691fa7d6ded1e0e6aaf57133fbb23d3756d",
       "file": "installed-apps.js",
       "path": "capabilities/installed-apps.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/installed-apps.js"
@@ -74,7 +78,6 @@
     {
       "name": "getNetworkInfo",
       "description": "Returns all active network adapters and their IPv4 addresses. Use when the user asks for their IP address, which network or adapter they are connected to, their network speed, or wants to see connection details.",
-      "version": null,
       "returnType": "data",
       "tags": [
         "system",
@@ -84,6 +87,8 @@
       "ui": "key-value",
       "marker": "silently",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "919b20661d114aa4612ccee7c6561283a3905796b08542cf30669f27cdf96b77",
       "file": "network-info.js",
       "path": "capabilities/network-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/network-info.js"
@@ -91,7 +96,6 @@
     {
       "name": "listProcesses",
       "description": "Lists the top 10 processes consuming the most CPU, showing process ID, name, CPU time, and memory usage in bytes. Use when the user asks what is slowing the PC down, which processes are running, what is consuming CPU, or wants to identify resource hogs.",
-      "version": null,
       "returnType": "data",
       "tags": [
         "system",
@@ -100,6 +104,8 @@
       "ui": "table",
       "marker": "silently",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "b31552132b1c3bda7c38f067d8357c76f8f69daf03668cece227cdff09db74d4",
       "file": "processes.js",
       "path": "capabilities/processes.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/processes.js"
@@ -107,7 +113,6 @@
     {
       "name": "quickNote",
       "description": "Persistently saves and retrieves short text notes using the memory system. Supports five operations: add (save a new note), list (show all notes), search (find notes by keyword), delete (remove a note by index), clear (wipe all notes). Use whenever the user wants to save, recall, find, or delete a note or reminder.",
-      "version": null,
       "returnType": "hybrid",
       "tags": [
         "note",
@@ -119,6 +124,8 @@
       "ui": null,
       "marker": "silently",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "80f62196c406dfbc90612ffe1cd36d3c68046754be32d2837f8b4d3ed03c3b45",
       "file": "quick-note.js",
       "path": "capabilities/quick-note.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/quick-note.js"
@@ -126,7 +133,6 @@
     {
       "name": "listRunningApps",
       "description": "Lists all applications with a visible window currently open on the desktop, showing app name, window title, and memory usage in MB. Background services and system processes are excluded. Use when the user asks what apps or windows are open right now.",
-      "version": null,
       "returnType": "data",
       "tags": [
         "system",
@@ -136,6 +142,8 @@
       "ui": "card-list",
       "marker": "silently",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "d28b2c81f7f4aaeb198648765f533e99051a0be5cac065b4c181b4019af2a478",
       "file": "running-apps.js",
       "path": "capabilities/running-apps.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/running-apps.js"
@@ -143,7 +151,6 @@
     {
       "name": "systemCleaner",
       "description": "Frees up disk space by removing junk files from Windows Temp, System Temp, thumbnails, Chrome cache, and Edge cache. Three operations: scan (preview how much space can be recovered without deleting anything), clean (permanently delete the junk files and report freed MB), empty-recycle-bin (immediately empty the Recycle Bin). Use when the user wants to clean up, free space, or remove temporary files.",
-      "version": null,
       "returnType": "hybrid",
       "tags": [
         "clean",
@@ -156,6 +163,8 @@
       "ui": "key-value",
       "marker": "announce",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "275cba2600fa6f5b7ad4914835efeb782cd0e5ba97d4a15bf6439432f910f5c5",
       "file": "system-cleaner.js",
       "path": "capabilities/system-cleaner.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-cleaner.js"
@@ -163,7 +172,6 @@
     {
       "name": "getSystemInfo",
       "description": "Reports a real-time snapshot of system health: current CPU load percentage, RAM used vs total in GB, battery charge percentage (or N/A on desktops), and how long the system has been running since last reboot. Use when the user asks how the PC is performing, checks battery level, asks about RAM or CPU usage, or wants a general hardware status summary.",
-      "version": null,
       "returnType": "data",
       "tags": [
         "system",
@@ -173,6 +181,8 @@
       "ui": "key-value",
       "marker": "silently",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "f428991c25965f39d421de131dcc8b8c3f8834103dff79a4e84408b33df0e4d6",
       "file": "system-info.js",
       "path": "capabilities/system-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-info.js"
@@ -180,7 +190,6 @@
     {
       "name": "wifiPasswords",
       "description": "Retrieves saved WiFi network credentials stored on this Windows PC. Without a network name, returns a list of all saved networks and whether each has a password. With a network name, confirms whether a password is saved for that specific network. Passwords are returned redacted for security. Use when the user asks what WiFi networks are saved, or wants to check a saved network.",
-      "version": null,
       "returnType": "data",
       "tags": [
         "wifi",
@@ -191,6 +200,8 @@
       "ui": "table",
       "marker": "confirm",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "5eb2ed6c418a39822337bd2a39e2dc73c37ff88f32444b99f0f8a29b89b8a2ae",
       "file": "wifi-passwords.js",
       "path": "capabilities/wifi-passwords.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/wifi-passwords.js"
@@ -198,7 +209,6 @@
     {
       "name": "youtubeSearch",
       "description": "Opens the YouTube search results page in the default browser for a given search query. Use when the user asks to search, find, watch, or look up anything on YouTube. Requires a non-empty search query.",
-      "version": null,
       "returnType": "action",
       "tags": [
         "web",
@@ -209,6 +219,8 @@
       "ui": null,
       "marker": "announce",
       "enabled": true,
+      "version": "1.0.0",
+      "fileHash": "64ede47e3f077090de7dbfef2d100dd1ebaf26735247903017f8e6ac06470d42",
       "file": "youtube-search.js",
       "path": "capabilities/youtube-search.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/youtube-search.js"

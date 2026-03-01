@@ -14,7 +14,7 @@ module.exports = {
   schema: z.object({}),
   name: "listRunningApps",
   description:
-    "Lists lala all applications with a visible window currently open on the desktop, showing app name, window title, and memory usage in MB. Background services and system processes are excluded. Use when the user asks what apps or windows are open right now.",
+    "Lists all applications with a visible window currently open on the desktop, showing app name, window title, and memory usage in MB. Background services and system processes are excluded. Use when the user asks what apps or windows are open right now.",
   tags: ["system", "apps", "running"],
 
   returnType: "data",
