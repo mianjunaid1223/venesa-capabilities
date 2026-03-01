@@ -1,0 +1,217 @@
+{
+  "generated": "2026-03-01T16:43:51.053Z",
+  "repository": "mianjunaid1223/venesa-capabilities",
+  "branch": "main",
+  "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
+  "count": 12,
+  "capabilities": [
+    {
+      "name": "getDiskInfo",
+      "description": "Get disk usage information",
+      "version": null,
+      "returnType": "data",
+      "tags": [
+        "system",
+        "disk",
+        "storage"
+      ],
+      "ui": "key-value",
+      "marker": "silently",
+      "enabled": true,
+      "file": "disk-info.js",
+      "path": "capabilities/disk-info.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/disk-info.js"
+    },
+    {
+      "name": "getTime",
+      "description": "Get the current date and time",
+      "version": null,
+      "returnType": "data",
+      "tags": [
+        "time",
+        "date"
+      ],
+      "ui": null,
+      "marker": "silently",
+      "enabled": true,
+      "file": "get-time.js",
+      "path": "capabilities/get-time.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/get-time.js"
+    },
+    {
+      "name": "getWeather",
+      "description": "Open weather information for a location",
+      "version": null,
+      "returnType": "action",
+      "tags": [
+        "weather",
+        "forecast"
+      ],
+      "ui": null,
+      "marker": "announce",
+      "enabled": true,
+      "file": "get-weather.js",
+      "path": "capabilities/get-weather.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/get-weather.js"
+    },
+    {
+      "name": "getInstalledApps",
+      "description": "List installed applications",
+      "version": null,
+      "returnType": "data",
+      "tags": [
+        "app",
+        "installed",
+        "list"
+      ],
+      "ui": "card-list",
+      "marker": "silently",
+      "enabled": true,
+      "file": "installed-apps.js",
+      "path": "capabilities/installed-apps.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/installed-apps.js"
+    },
+    {
+      "name": "getNetworkInfo",
+      "description": "Get network adapter and IP address info",
+      "version": null,
+      "returnType": "data",
+      "tags": [
+        "system",
+        "network",
+        "wifi"
+      ],
+      "ui": "key-value",
+      "marker": "silently",
+      "enabled": true,
+      "file": "network-info.js",
+      "path": "capabilities/network-info.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/network-info.js"
+    },
+    {
+      "name": "listProcesses",
+      "description": "List top 10 CPU-heavy processes",
+      "version": null,
+      "returnType": "data",
+      "tags": [
+        "system",
+        "processes"
+      ],
+      "ui": "table",
+      "marker": "silently",
+      "enabled": true,
+      "file": "processes.js",
+      "path": "capabilities/processes.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/processes.js"
+    },
+    {
+      "name": "quickNote",
+      "description": "Save and retrieve quick notes. Operations: add, list, search, delete, clear",
+      "version": null,
+      "returnType": "hybrid",
+      "tags": [
+        "note",
+        "memo",
+        "reminder",
+        "save",
+        "write"
+      ],
+      "ui": null,
+      "marker": "silently",
+      "enabled": true,
+      "file": "quick-note.js",
+      "path": "capabilities/quick-note.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/quick-note.js"
+    },
+    {
+      "name": "listRunningApps",
+      "description": "List currently running visible applications",
+      "version": null,
+      "returnType": "data",
+      "tags": [
+        "system",
+        "apps",
+        "running"
+      ],
+      "ui": "card-list",
+      "marker": "silently",
+      "enabled": true,
+      "file": "running-apps.js",
+      "path": "capabilities/running-apps.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/running-apps.js"
+    },
+    {
+      "name": "systemCleaner",
+      "description": "Clean temp files, browser caches, recycle bin. Recovers disk space. Operations: scan, clean, empty-recycle-bin",
+      "version": null,
+      "returnType": "hybrid",
+      "tags": [
+        "clean",
+        "temp",
+        "cache",
+        "recycle",
+        "space",
+        "junk"
+      ],
+      "ui": "key-value",
+      "marker": "announce",
+      "enabled": true,
+      "file": "system-cleaner.js",
+      "path": "capabilities/system-cleaner.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-cleaner.js"
+    },
+    {
+      "name": "getSystemInfo",
+      "description": "Get CPU, RAM, battery, and uptime info",
+      "version": null,
+      "returnType": "data",
+      "tags": [
+        "system",
+        "info",
+        "monitor"
+      ],
+      "ui": "key-value",
+      "marker": "silently",
+      "enabled": true,
+      "file": "system-info.js",
+      "path": "capabilities/system-info.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-info.js"
+    },
+    {
+      "name": "wifiPasswords",
+      "description": "Retrieve saved WiFi passwords. Use without params to list all networks, or specify a network name.",
+      "version": null,
+      "returnType": "data",
+      "tags": [
+        "wifi",
+        "password",
+        "network",
+        "internet"
+      ],
+      "ui": "table",
+      "marker": "confirm",
+      "enabled": true,
+      "file": "wifi-passwords.js",
+      "path": "capabilities/wifi-passwords.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/wifi-passwords.js"
+    },
+    {
+      "name": "youtubeSearch",
+      "description": "Search YouTube for a query and open results in browser",
+      "version": null,
+      "returnType": "action",
+      "tags": [
+        "web",
+        "search",
+        "youtube",
+        "video"
+      ],
+      "ui": null,
+      "marker": "announce",
+      "enabled": true,
+      "file": "youtube-search.js",
+      "path": "capabilities/youtube-search.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/youtube-search.js"
+    }
+  ]
+}
