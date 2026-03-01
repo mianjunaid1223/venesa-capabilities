@@ -8,7 +8,7 @@ Thank you for contributing to the official Venesa community capability registry.
 
 ### 1. Fork the Repository
 
-Click **Fork** on [mianjunaid1223/venesa-plugins](https://github.com/mianjunaid1223/venesa-plugins) to create your personal copy.
+Click **Fork** on [mianjunaid1223/venesa-capabilities](https://github.com/mianjunaid1223/venesa-capabilities) to create your personal copy.
 
 ### 2. Add Your Capability File at Root
 
@@ -36,9 +36,9 @@ github-issues.js
 
 **Invalid examples:**
 ```
-MyPlugin.js          ❌  (uppercase)
-my_plugin.js         ❌  (underscores)
-plugins/weather.js   ❌  (nested in folder)
+Mycapabilitie.js          ❌  (uppercase)
+my_capabilitie.js         ❌  (underscores)
+capabilities/weather.js   ❌  (nested in folder)
 weather/index.js     ❌  (folder structure)
 ```
 
@@ -134,4 +134,4 @@ Submitted pull requests go through the following:
 
 ## Questions
 
-Open an [issue](https://github.com/mianjunaid1223/venesa-plugins/issues) or start a [discussion](https://github.com/mianjunaid1223/venesa-plugins/discussions) if you have questions about the contribution process.
+Open an [issue](https://github.com/mianjunaid1223/venesa-capabilities/issues) or start a [discussion](https://github.com/mianjunaid1223/venesa-capabilities/discussions) if you have questions about the contribution process.

@@ -46,15 +46,15 @@ module.exports = {
 };
 ```
 
-For the full specification including schema validation, return types, lifecycle hooks, and UI rendering options, see the **Plugin Development Specification** section below.
+For the full specification including schema validation, return types, lifecycle hooks, and UI rendering options, see the **capabilitie Development Specification** section below.
 
 ---
 
-# Plugin Development Specification
+# capabilitie Development Specification
 
 ## The Unified Protocol Standard
 
-Venesa's internal reasoning logic treats both core features and community extensions uniformly via a strictly typed plugin standard. Every plugin must export a compliant object (module.exports).
+Venesa's internal reasoning logic treats both core features and community extensions uniformly via a strictly typed capabilitie standard. Every capabilitie must export a compliant object (module.exports).
 
 The architecture guarantees isolation; failed executions will be trapped and resolved cleanly by the orchestrator.
 
@@ -65,7 +65,7 @@ const { z } = require("zod");
 
 module.exports = {
   // Mandatory Implementation
-  name: "myPlugin",
+  name: "mycapabilitie",
   description: "Provides precise system queries to the execution engine.",
   returnType: "data", // Valid types: 'data' | 'action' | 'ui' | 'memory' | 'hybrid'
   schema: z.object({
@@ -100,7 +100,7 @@ module.exports = {
 The `handler(params)` encapsulates the functional operation.
 
 - **Payload:** The `params` object contains variables already sanitized against the defined `schema`.
-- **Isolation:** Operational context like the application thread is abstracted away from the parameter intake. The plugin solely acts upon structured parameters.
+- **Isolation:** Operational context like the application thread is abstracted away from the parameter intake. The capabilitie solely acts upon structured parameters.
 - **Response Format:** Returns a native object, JSON string, or standard string.
 
 ### Schema Validation
@@ -112,7 +112,7 @@ Extracted inputs are hard-validated against the `schema` variable before trigger
 
 ### Configuration Binding
 
-Plugins can supply external variable structures via `config`, using the Zod syntax model. Values propagate internally at boot from application configurations or persistent stores. Ensure you attach `.default()` fallback states so modules perform cleanly immediately upon insertion.
+capabilities can supply external variable structures via `config`, using the Zod syntax model. Values propagate internally at boot from application configurations or persistent stores. Ensure you attach `.default()` fallback states so modules perform cleanly immediately upon insertion.
 
 ## Handling Outputs
 
@@ -136,8 +136,8 @@ Lifecycles tie specific actions directly to external triggers. Hooks enforce asy
 
 ## Directory Formatting
 
-All plugins live under the `/plugins/` structure.
+All capabilities live under the `/capabilities/` structure.
 
-- A solitary file logic block: `/plugins/automation-feature.js`
-- Packaged multi-module structures: `/plugins/automation-feature/skill.js` (where `skill.js` serves as the target map).
+- A solitary file logic block: `/capabilities/automation-feature.js`
+- Packaged multi-module structures: `/capabilities/automation-feature/skill.js` (where `skill.js` serves as the target map).
 - Hidden logic elements (prefixed with `.` or `_`) are still loaded and executed by the system, but they are **not indexed** within the orchestrator loop. This means they will not appear in the AI's tool list and cannot be invoked by name through the orchestrator, though their side effects (e.g., lifecycle hooks) still run.
