@@ -6,121 +6,142 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-const { z } = require('zod');
-const memory = require('../src/brain/memory');
-const logger = require('../src/lib/logger');
+const { z } = require("zod");
+const memory = require("../src/brain/memory");
+const logger = require("../src/lib/logger");
 
-const BUCKET = 'context';
-const KEY = 'quickNotes';
+const BUCKET = "context";
+const KEY = "quickNotes";
 
 function getNotes() {
-    try {
-        return memory.get(BUCKET, KEY) || [];
-    } catch (e) {
-        logger.warn(`[quick-note] Failed to read notes: ${e?.message ?? String(e)}`);
-        return [];
-    }
+  try {
+    return memory.get(BUCKET, KEY) || [];
+  } catch (e) {
+    logger.warn(
+      `[quick-note] Failed to read notes: ${e?.message ?? String(e)}`,
+    );
+    return [];
+  }
 }
 
 function saveNotes(notes) {
-    try {
-        memory.set(BUCKET, KEY, notes);
-        return true;
-    } catch (e) {
-        logger.warn(`[quick-note] Failed to save notes: ${e?.message ?? String(e)}`);
-        return false;
-    }
+  try {
+    memory.set(BUCKET, KEY, notes);
+    return true;
+  } catch (e) {
+    logger.warn(
+      `[quick-note] Failed to save notes: ${e?.message ?? String(e)}`,
+    );
+    return false;
+  }
 }
 
 module.exports = {
-    name: 'quickNote',
-    description: 'Persistently saves and retrieves short text notes using the memory system. Supports five operations: add (save a new note), list (show all notes), search (find notes by keyword), delete (remove a note by index), clear (wipe all notes). Use whenever the user wants to save, recall, find, or delete a note or reminder.',
-    tags: ['note', 'memo', 'reminder', 'save', 'write'],
+  name: "quickNote",
+  description:
+    "Persistently saves and retrieves short text notes using the memory system. Supports five operations: add (save a new note), list (show all notes), search (find notes by keyword), delete (remove a note by index), clear (wipe all notes). Use whenever the user wants to save, recall, find, or delete a note or reminder.",
+  tags: ["note", "memo", "reminder", "save", "write"],
 
-    returnType: 'hybrid',
-    marker: 'silently',
-    ui: null,
+  returnType: "hybrid",
+  marker: "silently",
+  ui: null,
 
-    schema: z.object({
-        operation: z.enum(['add', 'list', 'search', 'delete', 'clear']).describe('Operation'),
-        text: z.string().optional().describe('Note text (for add/search)'),
-        index: z.number().optional().describe('Note index (for delete)'),
-    }),
+  schema: z.object({
+    operation: z
+      .enum(["add", "list", "search", "delete", "clear"])
+      .describe("Operation"),
+    text: z.string().optional().describe("Note text (for add/search)"),
+    index: z.number().optional().describe("Note index (for delete)"),
+  }),
 
-    examples: [
-
-        { user: 'save a note buy groceries', action: '[action: quickNote, operation: add, text: buy groceries]' },
-
-        { user: 'show my notes', action: '[action: quickNote, operation: list]' },
-
-    ],
-
-
-    handler(params) {
-        const { operation, text, index } = params;
-        const notes = getNotes();
-
-        switch (operation) {
-            case 'add': {
-                if (!text) return JSON.stringify({ error: 'Note text required.' });
-                notes.unshift({
-                    text,
-                    created: new Date().toISOString(),
-                    id: Date.now(),
-                });
-                const saved = saveNotes(notes);
-                if (!saved) return JSON.stringify({ error: 'Failed to save note.' });
-                return JSON.stringify({ success: true, total: notes.length });
-            }
-
-            case 'list': {
-                if (notes.length === 0) return JSON.stringify({ empty: true });
-                const items = notes.map((n, i) => ({
-                    index: i,
-                    text: n.text,
-                    date: new Date(n.created).toLocaleDateString(),
-                }));
-                return JSON.stringify({ notes: items, total: items.length });
-            }
-
-            case 'search': {
-                if (!text) return JSON.stringify({ error: 'Search text required.' });
-                const lower = text.toLowerCase();
-                const results = [];
-                for (let i = 0; i < notes.length; i++) {
-                    const safeText = typeof notes[i].text === 'string' ? notes[i].text : String(notes[i].text || '');
-                    if (safeText.toLowerCase().includes(lower)) {
-                        results.push({
-                            index: i,
-                            text: safeText,
-                            date: new Date(notes[i].created).toLocaleDateString(),
-                        });
-                    }
-                }
-                return JSON.stringify({ results, total: results.length });
-            }
-
-            case 'delete': {
-                if (index === undefined || index === null || typeof index !== 'number') {
-                    return JSON.stringify({ error: 'Explicit numeric index required for delete.' });
-                }
-                if (index < 0 || index >= notes.length) {
-                    return JSON.stringify({ error: `No note at index ${index}.` });
-                }
-                const removed = notes.splice(index, 1)[0];
-                const saved = saveNotes(notes);
-                if (!saved) return JSON.stringify({ error: 'Failed to save after delete.' });
-                return JSON.stringify({ success: true, deleted: removed.text });
-            }
-
-            case 'clear': {
-                const saved = saveNotes([]);
-                if (!saved) return JSON.stringify({ success: false, message: 'Failed to clear notes.' });
-                return JSON.stringify({ success: true, message: 'All notes cleared.' });
-            }
-
-            default:
-                return JSON.stringify({ error: `Unknown operation: ${operation}` });
-        }
+  examples: [
+    {
+      user: "save a note buy groceries",
+      action: "[action: quickNote, operation: add, text: buy groceries]",
     },
+
+    { user: "show my notes", action: "[action: quickNote, operation: list]" },
+  ],
+
+  async handler(params) {
+    const { operation, text, index } = params;
+    const notes = getNotes();
+
+    switch (operation) {
+      case "add": {
+        if (!text) return JSON.stringify({ error: "Note text required." });
+        notes.unshift({
+          text,
+          created: new Date().toISOString(),
+          id: Date.now(),
+        });
+        const saved = saveNotes(notes);
+        if (!saved) return JSON.stringify({ error: "Failed to save note." });
+        return JSON.stringify({ success: true, total: notes.length });
+      }
+
+      case "list": {
+        if (notes.length === 0) return JSON.stringify({ empty: true });
+        const items = notes.map((n, i) => ({
+          index: i,
+          text: n.text,
+          date: new Date(n.created).toLocaleDateString(),
+        }));
+        return JSON.stringify({ notes: items, total: items.length });
+      }
+
+      case "search": {
+        if (!text) return JSON.stringify({ error: "Search text required." });
+        const lower = text.toLowerCase();
+        const results = [];
+        for (let i = 0; i < notes.length; i++) {
+          const safeText =
+            typeof notes[i].text === "string"
+              ? notes[i].text
+              : String(notes[i].text || "");
+          if (safeText.toLowerCase().includes(lower)) {
+            results.push({
+              index: i,
+              text: safeText,
+              date: new Date(notes[i].created).toLocaleDateString(),
+            });
+          }
+        }
+        return JSON.stringify({ results, total: results.length });
+      }
+
+      case "delete": {
+        if (
+          index === undefined ||
+          index === null ||
+          typeof index !== "number"
+        ) {
+          return JSON.stringify({
+            error: "Explicit numeric index required for delete.",
+          });
+        }
+        if (index < 0 || index >= notes.length) {
+          return JSON.stringify({ error: `No note at index ${index}.` });
+        }
+        const removed = notes.splice(index, 1)[0];
+        const saved = saveNotes(notes);
+        if (!saved)
+          return JSON.stringify({ error: "Failed to save after delete." });
+        return JSON.stringify({ success: true, deleted: removed.text });
+      }
+
+      case "clear": {
+        const saved = saveNotes([]);
+        if (!saved)
+          return JSON.stringify({
+            success: false,
+            message: "Failed to clear notes.",
+          });
+        return JSON.stringify({ success: true, message: "All notes cleared." });
+      }
+
+      default:
+        return JSON.stringify({ error: `Unknown operation: ${operation}` });
+    }
+  },
 };
