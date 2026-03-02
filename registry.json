@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-02T01:48:24.850Z",
+  "generated": "2026-03-02T01:52:12.996Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -7,8 +7,8 @@
   "capabilities": [
     {
       "name": "getDiskInfo",
-      "description": "Shows fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
-      "version": "1.0.2",
+      "description": "Shows all fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
+      "version": "1.0.3",
       "returnType": "data",
       "tags": [
         "system",
@@ -18,7 +18,13 @@
       "ui": "key-value",
       "marker": "silently",
       "enabled": true,
-      "hash": "6d8aa66de381c202",
+      "examples": [
+        {
+          "user": "how much disk space do I have",
+          "action": "[action: getDiskInfo]"
+        }
+      ],
+      "hash": "a21fb1e5ad811fbf",
       "file": "disk-info.js",
       "path": "capabilities/disk-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/disk-info.js"
@@ -35,6 +41,12 @@
       "ui": null,
       "marker": "silently",
       "enabled": true,
+      "examples": [
+        {
+          "user": "what time is it",
+          "action": "[action: getTime]"
+        }
+      ],
       "hash": "8909e263f8b32f28",
       "file": "get-time.js",
       "path": "capabilities/get-time.js",
@@ -52,6 +64,12 @@
       "ui": null,
       "marker": "announce",
       "enabled": true,
+      "examples": [
+        {
+          "user": "what is the weather in London",
+          "action": "[action: getWeather, location: London]"
+        }
+      ],
       "hash": "b5ed5c57659f78b2",
       "file": "get-weather.js",
       "path": "capabilities/get-weather.js",
@@ -70,6 +88,12 @@
       "ui": "card-list",
       "marker": "silently",
       "enabled": true,
+      "examples": [
+        {
+          "user": "what apps are installed",
+          "action": "[action: getInstalledApps]"
+        }
+      ],
       "hash": "2a9a35efb86c6bfd",
       "file": "installed-apps.js",
       "path": "capabilities/installed-apps.js",
@@ -88,6 +112,12 @@
       "ui": "key-value",
       "marker": "silently",
       "enabled": true,
+      "examples": [
+        {
+          "user": "show my network info",
+          "action": "[action: getNetworkInfo]"
+        }
+      ],
       "hash": "919b20661d114aa4",
       "file": "network-info.js",
       "path": "capabilities/network-info.js",
@@ -105,6 +135,12 @@
       "ui": "table",
       "marker": "silently",
       "enabled": true,
+      "examples": [
+        {
+          "user": "what processes are using the most CPU",
+          "action": "[action: listProcesses]"
+        }
+      ],
       "hash": "b31552132b1c3bda",
       "file": "processes.js",
       "path": "capabilities/processes.js",
@@ -125,6 +161,16 @@
       "ui": null,
       "marker": "silently",
       "enabled": true,
+      "examples": [
+        {
+          "user": "save a note buy groceries",
+          "action": "[action: quickNote, operation: add, text: buy groceries]"
+        },
+        {
+          "user": "show my notes",
+          "action": "[action: quickNote, operation: list]"
+        }
+      ],
       "hash": "80f62196c406dfbc",
       "file": "quick-note.js",
       "path": "capabilities/quick-note.js",
@@ -143,6 +189,12 @@
       "ui": "card-list",
       "marker": "silently",
       "enabled": true,
+      "examples": [
+        {
+          "user": "what apps are open right now",
+          "action": "[action: listRunningApps]"
+        }
+      ],
       "hash": "d28b2c81f7f4aaeb",
       "file": "running-apps.js",
       "path": "capabilities/running-apps.js",
@@ -164,6 +216,16 @@
       "ui": "key-value",
       "marker": "announce",
       "enabled": true,
+      "examples": [
+        {
+          "user": "clean up my system",
+          "action": "[action: systemCleaner, operation: scan]"
+        },
+        {
+          "user": "empty the recycle bin",
+          "action": "[action: systemCleaner, operation: empty-recycle-bin]"
+        }
+      ],
       "hash": "275cba2600fa6f5b",
       "file": "system-cleaner.js",
       "path": "capabilities/system-cleaner.js",
@@ -182,6 +244,16 @@
       "ui": "key-value",
       "marker": "silently",
       "enabled": true,
+      "examples": [
+        {
+          "user": "how is my PC doing",
+          "action": "[action: getSystemInfo]"
+        },
+        {
+          "user": "check battery level",
+          "action": "[action: getSystemInfo]"
+        }
+      ],
       "hash": "f428991c25965f39",
       "file": "system-info.js",
       "path": "capabilities/system-info.js",
@@ -201,6 +273,12 @@
       "ui": "table",
       "marker": "confirm",
       "enabled": true,
+      "examples": [
+        {
+          "user": "show saved wifi passwords",
+          "action": "[action: wifiPasswords]"
+        }
+      ],
       "hash": "5eb2ed6c418a3982",
       "file": "wifi-passwords.js",
       "path": "capabilities/wifi-passwords.js",
@@ -220,6 +298,12 @@
       "ui": null,
       "marker": "announce",
       "enabled": true,
+      "examples": [
+        {
+          "user": "search YouTube for lo-fi music",
+          "action": "[action: youtubeSearch, query: lo-fi music]"
+        }
+      ],
       "hash": "64ede47e3f077090",
       "file": "youtube-search.js",
       "path": "capabilities/youtube-search.js",

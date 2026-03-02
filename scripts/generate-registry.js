@@ -53,22 +53,28 @@ const REGISTRY_PATH = path.join(ROOT, "registry.json");
 // ─── Version ledger helpers ───────────────────────────────────────────────────
 
 /**
+ * Load the previous registry.json (or empty structure if absent).
+ */
+function loadPrevRegistry() {
+  try {
+    return JSON.parse(fs.readFileSync(REGISTRY_PATH, "utf8"));
+  } catch {
+    return { capabilities: [] };
+  }
+}
+
+/**
  * Build a version ledger from the previously generated registry.json.
  * Shape: { [capabilityName]: { version: string, hash: string } }
  */
-function loadLedgerFromRegistry() {
-  try {
-    const prev = JSON.parse(fs.readFileSync(REGISTRY_PATH, "utf8"));
-    const ledger = {};
-    for (const cap of prev.capabilities ?? []) {
-      if (cap.name && cap.version && cap.hash) {
-        ledger[cap.name] = { version: cap.version, hash: cap.hash };
-      }
+function loadLedgerFromRegistry(prev) {
+  const ledger = {};
+  for (const cap of prev.capabilities ?? []) {
+    if (cap.name && cap.version && cap.hash) {
+      ledger[cap.name] = { version: cap.version, hash: cap.hash };
     }
-    return ledger;
-  } catch {
-    return {};
   }
+  return ledger;
 }
 
 /** Compute the SHA-256 hash of a file's content (hex, first 16 chars). */
@@ -216,6 +222,12 @@ function extractMeta(exp) {
   const name = str(exp.name);
   if (!name) return null; // name is the minimum required field
 
+  const examples = Array.isArray(exp.examples)
+    ? exp.examples.filter(
+        (e) => e && typeof e === "object" && typeof e.user === "string",
+      )
+    : [];
+
   return {
     name,
     description: str(exp.description) ?? "",
@@ -225,6 +237,7 @@ function extractMeta(exp) {
     ui: str(exp.ui) ?? null,
     marker: str(exp.marker) ?? null,
     enabled: bool(exp.enabled),
+    examples,
   };
 }
 
@@ -236,8 +249,12 @@ const capabilities = [];
 const seenFiles = new Set(); // deduplicate by filename (capabilities/ wins over root)
 const seenNames = new Map(); // name → relPath — used to detect duplicate names
 
-// Load version history from the previous registry.json.
-const ledger = loadLedgerFromRegistry();
+// Load previous registry once — used for version ledger and change detection.
+const prevRegistry = loadPrevRegistry();
+const prevCapMap = new Map(
+  (prevRegistry.capabilities ?? []).map((c) => [c.name, c]),
+);
+const ledger = loadLedgerFromRegistry(prevRegistry);
 
 for (const { dir, prefix } of SCAN_DIRS) {
   const dirPath = path.join(ROOT, dir);
@@ -301,10 +318,26 @@ for (const { dir, prefix } of SCAN_DIRS) {
 
     const wasNull = meta.version === null;
     meta.version = version;
+
+    // Detect metadata changes for logging
+    const prevCap = prevCapMap.get(meta.name) ?? null;
+
+    const changedFields = [];
+    if (prevCap) {
+      for (const key of ["description", "returnType", "ui", "marker", "enabled"]) {
+        if (JSON.stringify(prevCap[key]) !== JSON.stringify(meta[key])) {
+          changedFields.push(key);
+        }
+      }
+      if (JSON.stringify(prevCap.tags) !== JSON.stringify(meta.tags)) changedFields.push("tags");
+      if (JSON.stringify(prevCap.examples) !== JSON.stringify(meta.examples)) changedFields.push("examples");
+    }
+
+    const metaNote = changedFields.length ? `  [updated: ${changedFields.join(", ")}]` : "";
     if (wasNull) {
-      console.log(`✓  ${meta.name}  (version → ${version})`);
+      console.log(`✓  ${meta.name}  (version → ${version})${metaNote}`);
     } else {
-      console.log(`✓  ${meta.name}  (version ${version})`);
+      console.log(`✓  ${meta.name}  (version ${version})${metaNote}`);
     }
 
     capabilities.push({
