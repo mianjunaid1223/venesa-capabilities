@@ -3,10 +3,6 @@ name: Update Registry
 on:
   push:
     branches: [main]
-    paths:
-      - 'capabilities/**'
-      - '*.js'
-      - 'scripts/generate-registry.js'
   workflow_dispatch:      # allow manual trigger from GitHub UI
 
 permissions:
@@ -39,6 +35,7 @@ jobs:
         with:
           commit_message: 'chore: update registry.json [skip ci]'
           file_pattern: registry.json
+          skip_dirty_check: false
           commit_user_name:  venesa-bot
           commit_user_email: bot@venesa.app
           commit_author:     venesa-bot <bot@venesa.app>

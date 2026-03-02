@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-02T01:38:14.201Z",
+  "generated": "2026-03-02T01:48:24.850Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -7,8 +7,8 @@
   "capabilities": [
     {
       "name": "getDiskInfo",
-      "description": "Shows all fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
-      "version": "1.0.1",
+      "description": "Shows fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
+      "version": "1.0.2",
       "returnType": "data",
       "tags": [
         "system",
@@ -18,7 +18,7 @@
       "ui": "key-value",
       "marker": "silently",
       "enabled": true,
-      "hash": "a21fb1e5ad811fbf",
+      "hash": "6d8aa66de381c202",
       "file": "disk-info.js",
       "path": "capabilities/disk-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/disk-info.js"

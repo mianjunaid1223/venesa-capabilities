@@ -5,12 +5,12 @@
  * Scans all capability files, evaluates their exports in a sandbox,
  * and writes registry.json with full metadata + raw download URLs.
  *
- * Version management (versions.json):
+ * Version management (self-contained in registry.json):
  *   - New capabilities start at "1.0.0".
  *   - If a capability's file content changes, the patch version is bumped automatically.
  *   - If the capability itself exports an explicit version string it overrides auto-versioning
  *     AND is stored so the next run keeps it unless the file changes again.
- *   - versions.json is committed alongside registry.json so CI retains history.
+ *   - Version history is tracked inside registry.json itself — no separate versions.json.
  *
  * Duplicate-name guard:
  *   - Two capability files that export the same `name` are an error.
@@ -47,18 +47,25 @@ const SCAN_DIRS = [
 /** Root-level files that are infrastructure, not capabilities. */
 const SKIP_ROOT = new Set(["generate-registry.js", ".example-capability.js"]);
 
-/** Path to the persisted version ledger. */
-const VERSIONS_PATH = path.join(ROOT, "versions.json");
+/** Path to registry.json (source of truth for version history). */
+const REGISTRY_PATH = path.join(ROOT, "registry.json");
 
 // ─── Version ledger helpers ───────────────────────────────────────────────────
 
 /**
- * Load the existing version ledger from disk.
+ * Build a version ledger from the previously generated registry.json.
  * Shape: { [capabilityName]: { version: string, hash: string } }
  */
-function loadVersions() {
+function loadLedgerFromRegistry() {
   try {
-    return JSON.parse(fs.readFileSync(VERSIONS_PATH, "utf8"));
+    const prev = JSON.parse(fs.readFileSync(REGISTRY_PATH, "utf8"));
+    const ledger = {};
+    for (const cap of prev.capabilities ?? []) {
+      if (cap.name && cap.version && cap.hash) {
+        ledger[cap.name] = { version: cap.version, hash: cap.hash };
+      }
+    }
+    return ledger;
   } catch {
     return {};
   }
@@ -229,9 +236,8 @@ const capabilities = [];
 const seenFiles = new Set(); // deduplicate by filename (capabilities/ wins over root)
 const seenNames = new Map(); // name → relPath — used to detect duplicate names
 
-// Load the persisted version ledger (mutated during the run, then saved).
-const ledger = loadVersions();
-const updatedLedger = {};          // will replace ledger on disk after a clean run
+// Load version history from the previous registry.json.
+const ledger = loadLedgerFromRegistry();
 
 for (const { dir, prefix } of SCAN_DIRS) {
   const dirPath = path.join(ROOT, dir);
@@ -292,7 +298,6 @@ for (const { dir, prefix } of SCAN_DIRS) {
       meta.version,   // may be null
       ledger,
     );
-    updatedLedger[meta.name] = entry;
 
     const wasNull = meta.version === null;
     meta.version = version;
@@ -323,17 +328,9 @@ const registry = {
   capabilities,
 };
 
-const outPath = path.join(ROOT, "registry.json");
-fs.writeFileSync(outPath, JSON.stringify(registry, null, 2) + "\n", "utf8");
-
-// Persist the updated version ledger (sorted by name for stable diffs).
-const sortedLedger = Object.fromEntries(
-  Object.entries(updatedLedger).sort(([a], [b]) => a.localeCompare(b)),
-);
-fs.writeFileSync(VERSIONS_PATH, JSON.stringify(sortedLedger, null, 2) + "\n", "utf8");
+fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2) + "\n", "utf8");
 
 console.log(
   `\n✅  registry.json written — ${capabilities.length} capabilities indexed.`,
 );
-console.log(`    ${outPath}`);
-console.log(`    ${VERSIONS_PATH}\n`);
+console.log(`    ${REGISTRY_PATH}\n`);
