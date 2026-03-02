@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-02T01:25:20.407Z",
+  "generated": "2026-03-02T01:33:28.541Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -8,7 +8,7 @@
     {
       "name": "getDiskInfo",
       "description": "Shows all lalala fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "data",
       "tags": [
         "system",
@@ -25,7 +25,7 @@
     {
       "name": "getTime",
       "description": "Returns the current local time and full date including day of the week. Use when the user asks what time it is, today's date, what day it is, or any question about the current moment.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "data",
       "tags": [
         "time",
@@ -41,7 +41,7 @@
     {
       "name": "getWeather",
       "description": "Opens a live Google weather search in the browser for a given city or location. Use when the user asks about the current weather, temperature, forecast, or conditions for any place. Accepts an optional location; defaults to generic weather if none is given.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "action",
       "tags": [
         "weather",
@@ -57,7 +57,7 @@
     {
       "name": "getInstalledApps",
       "description": "Scans the Windows registry and returns up to 50 installed programs with their name, version, and publisher. Use when the user asks what software is installed, whether a specific program exists on the PC, or wants a list of installed applications.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "data",
       "tags": [
         "app",
@@ -74,7 +74,7 @@
     {
       "name": "getNetworkInfo",
       "description": "Returns all active network adapters and their IPv4 addresses. Use when the user asks for their IP address, which network or adapter they are connected to, their network speed, or wants to see connection details.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "data",
       "tags": [
         "system",
@@ -91,7 +91,7 @@
     {
       "name": "listProcesses",
       "description": "Lists the top 10 processes consuming the most CPU, showing process ID, name, CPU time, and memory usage in bytes. Use when the user asks what is slowing the PC down, which processes are running, what is consuming CPU, or wants to identify resource hogs.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "data",
       "tags": [
         "system",
@@ -107,7 +107,7 @@
     {
       "name": "quickNote",
       "description": "Persistently saves and retrieves short text notes using the memory system. Supports five operations: add (save a new note), list (show all notes), search (find notes by keyword), delete (remove a note by index), clear (wipe all notes). Use whenever the user wants to save, recall, find, or delete a note or reminder.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "hybrid",
       "tags": [
         "note",
@@ -126,7 +126,7 @@
     {
       "name": "listRunningApps",
       "description": "Lists all applications with a visible window currently open on the desktop, showing app name, window title, and memory usage in MB. Background services and system processes are excluded. Use when the user asks what apps or windows are open right now.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "data",
       "tags": [
         "system",
@@ -143,7 +143,7 @@
     {
       "name": "systemCleaner",
       "description": "Frees up disk space by removing junk files from Windows Temp, System Temp, thumbnails, Chrome cache, and Edge cache. Three operations: scan (preview how much space can be recovered without deleting anything), clean (permanently delete the junk files and report freed MB), empty-recycle-bin (immediately empty the Recycle Bin). Use when the user wants to clean up, free space, or remove temporary files.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "hybrid",
       "tags": [
         "clean",
@@ -163,7 +163,7 @@
     {
       "name": "getSystemInfo",
       "description": "Reports a real-time snapshot of system health: current CPU load percentage, RAM used vs total in GB, battery charge percentage (or N/A on desktops), and how long the system has been running since last reboot. Use when the user asks how the PC is performing, checks battery level, asks about RAM or CPU usage, or wants a general hardware status summary.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "data",
       "tags": [
         "system",
@@ -180,7 +180,7 @@
     {
       "name": "wifiPasswords",
       "description": "Retrieves saved WiFi network credentials stored on this Windows PC. Without a network name, returns a list of all saved networks and whether each has a password. With a network name, confirms whether a password is saved for that specific network. Passwords are returned redacted for security. Use when the user asks what WiFi networks are saved, or wants to check a saved network.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "data",
       "tags": [
         "wifi",
@@ -198,7 +198,7 @@
     {
       "name": "youtubeSearch",
       "description": "Opens the YouTube search results page in the default browser for a given search query. Use when the user asks to search, find, watch, or look up anything on YouTube. Requires a non-empty search query.",
-      "version": null,
+      "version": "1.0.0",
       "returnType": "action",
       "tags": [
         "web",
