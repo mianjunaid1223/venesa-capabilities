@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  capabilitie: quick-note
+ *  capability: quick-note
  *  Capture and retrieve quick notes by voice or text.
  *  Persistent via memory system.
  * ═══════════════════════════════════════════════════════════════

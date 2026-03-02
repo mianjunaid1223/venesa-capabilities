@@ -10,11 +10,11 @@ Thank you for contributing to the official Venesa community capability registry.
 
 Click **Fork** on [mianjunaid1223/venesa-capabilities](https://github.com/mianjunaid1223/venesa-capabilities) to create your personal copy.
 
-### 2. Add Your Capability File at Root
+### 2. Add Your Capability File
 
-Add a single `.js` file directly at the **root** of the repository.
+Add a single `.js` file inside the **`/capabilities/`** folder of the repository.
 
-**No folders. No sub-directories. Root only.**
+**No sub-directories inside `/capabilities/`. One flat level only.**
 
 ### 3. File Name Format
 
@@ -26,20 +26,19 @@ Use lowercase, hyphen-separated names that describe what the capability does.
 
 **Valid examples:**
 ```
-weather.js
-filesystem.js
-web-search.js
-screenshot.js
-send-email.js
-github-issues.js
+capabilities/weather.js
+capabilities/filesystem.js
+capabilities/web-search.js
+capabilities/screenshot.js
+capabilities/send-email.js
+capabilities/github-issues.js
 ```
 
 **Invalid examples:**
 ```
-Mycapabilitie.js          ❌  (uppercase)
-my_capabilitie.js         ❌  (underscores)
-capabilities/weather.js   ❌  (nested in folder)
-weather/index.js     ❌  (folder structure)
+MyCapability.js                        ❌  (uppercase)
+my_capability.js                       ❌  (underscores)
+capabilities/weather/index.js          ❌  (nested sub-folder)
 ```
 
 ### 4. Submit a Pull Request
@@ -111,7 +110,7 @@ module.exports = {
 
 All submissions must follow these rules to be accepted:
 
-- **No folders** — capability file must be at repository root
+- **Place files in `/capabilities/`** — capability file must live directly inside the `/capabilities/` directory (no sub-folders)
 - **No bundled dependencies** — use Node.js built-ins or packages already available in the Venesa runtime
 - **No malicious execution** — no code that harms users, exfiltrates data, or executes unsolicited system commands
 - **No side effects during import** — the module must not execute logic when `require()`'d; all execution must be inside `handler`
@@ -125,7 +124,7 @@ All submissions must follow these rules to be accepted:
 
 Submitted pull requests go through the following:
 
-1. Automated structure validation (file at root, `.js` extension, valid export shape)
+### 1. Automated structure validation (file in `/capabilities/`, `.js` extension, valid export shape)
 2. Manual review for security and policy compliance
 3. Approval by at least 1 maintainer
 4. Merge into `main` — capability is immediately discoverable by Venesa

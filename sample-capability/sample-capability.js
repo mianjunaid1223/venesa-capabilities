@@ -1,7 +1,7 @@
 /**
- * Venesa Sample capabilitie
+ * Venesa Sample Capability
  *
- * capabilitie STANDARD SCHEMA (Unified Protocol):
+ * CAPABILITY STANDARD SCHEMA (Unified Protocol):
  *  - name:        string  — unique camelCase ID used by the AI as a tool name
  *  - description: string  — shown in Settings and injected into the AI prompt
  *  - returnType:  'data'|'action'|'ui'|'memory'|'hybrid' — REQUIRED
@@ -9,26 +9,26 @@
  *  - schema:      ZodObject — parameter validation schema
  *  - handler:     async (params) => any — REQUIRED
  *
- * The AI decides when to call your capabilitie based on name + description.
+ * The AI decides when to call your capability based on name + description.
  * handler(params) receives parameters the AI passes.
  */
 const { z } = require('zod');
 
 module.exports = {
-    name: 'samplecapabilitie',
-    description: 'Returns a custom greeting and a sample data table. ONLY use when the user EXPLICITLY asks to "test the table capabilitie" or "show the sample capabilitie". Do NOT use for general UI questions.',
+    name: 'sampleCapability',
+    description: 'Returns a custom greeting and a sample data table. ONLY use when the user EXPLICITLY asks to "test the table capability" or "show the sample capability". Do NOT use for general UI questions.',
 
     returnType: 'data',
     ui: 'table',
     enabled: true,
 
     schema: z.object({
-        query: z.string().optional().describe('The user query to demonstrate the capabilitie.'),
+        query: z.string().optional().describe('The user query to demonstrate the capability.'),
         text: z.string().optional().describe('Fallback text input.'),
     }),
 
     examples: [
-        { user: 'test the table capabilitie', action: '[action: samplecapabilitie]' },
+        { user: 'test the table capability', action: '[action: sampleCapability]' },
     ],
 
     handler: async (params) => {
@@ -43,7 +43,7 @@ module.exports = {
 
         return {
             success: true,
-            message: `Hello from the sample capabilitie! You said: "${query || 'Nothing'}"`,
+            message: `Hello from the sample capability! You said: "${query || 'Nothing'}"`,
             data,
         };
     },

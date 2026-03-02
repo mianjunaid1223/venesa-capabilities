@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  capabilitie: system-cleaner
+ *  capability: system-cleaner
  *  Clean temp files, browser caches, recycle bin, logs.
  * ═══════════════════════════════════════════════════════════════
  */

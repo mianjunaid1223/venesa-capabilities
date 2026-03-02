@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  capabilitie: wifi-passwords
+ *  capability: wifi-passwords
  *  Retrieve saved WiFi network passwords.
  * ═══════════════════════════════════════════════════════════════
  */
