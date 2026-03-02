@@ -304,6 +304,7 @@ for (const { dir, prefix } of SCAN_DIRS) {
 
     capabilities.push({
       ...meta,
+      hash: entry.hash,
       file: file,
       path: relPath,
       url: `${RAW_BASE}/${relPath}`,
