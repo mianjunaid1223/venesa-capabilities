@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-02T01:33:50.676Z",
+  "generated": "2026-03-02T01:38:14.201Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -7,8 +7,8 @@
   "capabilities": [
     {
       "name": "getDiskInfo",
-      "description": "Shows all lalala fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
-      "version": "1.0.0",
+      "description": "Shows all fixed drives (C:, D:, etc.) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
+      "version": "1.0.1",
       "returnType": "data",
       "tags": [
         "system",
@@ -18,6 +18,7 @@
       "ui": "key-value",
       "marker": "silently",
       "enabled": true,
+      "hash": "a21fb1e5ad811fbf",
       "file": "disk-info.js",
       "path": "capabilities/disk-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/disk-info.js"
@@ -34,6 +35,7 @@
       "ui": null,
       "marker": "silently",
       "enabled": true,
+      "hash": "8909e263f8b32f28",
       "file": "get-time.js",
       "path": "capabilities/get-time.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/get-time.js"
@@ -50,6 +52,7 @@
       "ui": null,
       "marker": "announce",
       "enabled": true,
+      "hash": "b5ed5c57659f78b2",
       "file": "get-weather.js",
       "path": "capabilities/get-weather.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/get-weather.js"
@@ -67,6 +70,7 @@
       "ui": "card-list",
       "marker": "silently",
       "enabled": true,
+      "hash": "2a9a35efb86c6bfd",
       "file": "installed-apps.js",
       "path": "capabilities/installed-apps.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/installed-apps.js"
@@ -84,6 +88,7 @@
       "ui": "key-value",
       "marker": "silently",
       "enabled": true,
+      "hash": "919b20661d114aa4",
       "file": "network-info.js",
       "path": "capabilities/network-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/network-info.js"
@@ -100,6 +105,7 @@
       "ui": "table",
       "marker": "silently",
       "enabled": true,
+      "hash": "b31552132b1c3bda",
       "file": "processes.js",
       "path": "capabilities/processes.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/processes.js"
@@ -119,6 +125,7 @@
       "ui": null,
       "marker": "silently",
       "enabled": true,
+      "hash": "80f62196c406dfbc",
       "file": "quick-note.js",
       "path": "capabilities/quick-note.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/quick-note.js"
@@ -136,6 +143,7 @@
       "ui": "card-list",
       "marker": "silently",
       "enabled": true,
+      "hash": "d28b2c81f7f4aaeb",
       "file": "running-apps.js",
       "path": "capabilities/running-apps.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/running-apps.js"
@@ -156,6 +164,7 @@
       "ui": "key-value",
       "marker": "announce",
       "enabled": true,
+      "hash": "275cba2600fa6f5b",
       "file": "system-cleaner.js",
       "path": "capabilities/system-cleaner.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-cleaner.js"
@@ -173,6 +182,7 @@
       "ui": "key-value",
       "marker": "silently",
       "enabled": true,
+      "hash": "f428991c25965f39",
       "file": "system-info.js",
       "path": "capabilities/system-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-info.js"
@@ -191,6 +201,7 @@
       "ui": "table",
       "marker": "confirm",
       "enabled": true,
+      "hash": "5eb2ed6c418a3982",
       "file": "wifi-passwords.js",
       "path": "capabilities/wifi-passwords.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/wifi-passwords.js"
@@ -209,6 +220,7 @@
       "ui": null,
       "marker": "announce",
       "enabled": true,
+      "hash": "64ede47e3f077090",
       "file": "youtube-search.js",
       "path": "capabilities/youtube-search.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/youtube-search.js"
