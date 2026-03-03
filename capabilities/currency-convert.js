@@ -17,7 +17,7 @@ module.exports = {
   tags: ["currency", "money", "finance", "convert", "exchange"],
 
   returnType: "data",
-  marker: "announce",
+  marker: "silently",
   ui: null,
   dependencies: ["axios@1.7.9"],
 
