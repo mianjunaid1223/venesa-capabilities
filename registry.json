@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-03T16:11:17.047Z",
+  "generated": "2026-03-03T19:07:49.143Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -8,7 +8,7 @@
     {
       "name": "convertCurrency",
       "description": "Converts a monetary amount from one currency to another using live exchange rates. Use when the user asks to convert money, asks how much X dollars/euros/pounds is in another currency, or wants to know the exchange rate between two currencies. Accepts the amount, source currency code (e.g. USD), and target currency code (e.g. EUR).",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "returnType": "data",
       "tags": [
         "currency",
@@ -17,8 +17,8 @@
         "convert",
         "exchange"
       ],
-      "ui": "key-value",
-      "marker": "silently",
+      "ui": null,
+      "marker": "announce",
       "enabled": true,
       "examples": [
         {
@@ -34,7 +34,10 @@
           "action": "[action: convertCurrency, amount: 1, from: PKR, to: USD]"
         }
       ],
-      "hash": "ea105652780fac9a",
+      "dependencies": [
+        "axios@1.7.9"
+      ],
+      "hash": "55077947be4bf3f1",
       "file": "currency-convert.js",
       "path": "capabilities/currency-convert.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/currency-convert.js"
@@ -160,7 +163,7 @@
     {
       "name": "listProcesses",
       "description": "Lists the top 10 processes consuming the most CPU, showing process ID, name, CPU time, and memory usage in bytes. Use when the user asks what is slowing the PC down, which processes are running, what is consuming CPU, or wants to identify resource hogs.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "returnType": "data",
       "tags": [
         "system",
@@ -175,7 +178,7 @@
           "action": "[action: listProcesses]"
         }
       ],
-      "hash": "716063e0c2c9d092",
+      "hash": "2683ef10e76a92ec",
       "file": "processes.js",
       "path": "capabilities/processes.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/processes.js"
@@ -237,7 +240,7 @@
     {
       "name": "systemCleaner",
       "description": "Frees up disk space by removing junk files from Windows Temp, System Temp, thumbnails, Chrome cache, and Edge cache. Three operations: scan (preview how much space can be recovered without deleting anything), clean (permanently delete the junk files and report freed MB), empty-recycle-bin (immediately empty the Recycle Bin). Use when the user wants to clean up, free space, or remove temporary files.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "returnType": "hybrid",
       "tags": [
         "clean",
@@ -260,7 +263,7 @@
           "action": "[action: systemCleaner, operation: empty-recycle-bin]"
         }
       ],
-      "hash": "1db617689ef8e6dd",
+      "hash": "bed328a909ec342d",
       "file": "system-cleaner.js",
       "path": "capabilities/system-cleaner.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-cleaner.js"
