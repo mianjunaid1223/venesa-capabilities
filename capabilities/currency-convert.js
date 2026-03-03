@@ -17,8 +17,8 @@ module.exports = {
   tags: ["currency", "money", "finance", "convert", "exchange"],
 
   returnType: "data",
-  marker: "silently",
-  ui: "key-value",
+  marker: "announce",
+  ui: null,
   dependencies: ["axios@1.7.9"],
 
   schema: z.object({

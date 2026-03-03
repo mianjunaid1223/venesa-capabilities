@@ -238,6 +238,7 @@ function extractMeta(exp) {
     marker: str(exp.marker) ?? null,
     enabled: bool(exp.enabled),
     examples,
+    ...(arr(exp.dependencies).length > 0 ? { dependencies: arr(exp.dependencies) } : {}),
   };
 }
 
@@ -331,6 +332,7 @@ for (const { dir, prefix } of SCAN_DIRS) {
       }
       if (JSON.stringify(prevCap.tags) !== JSON.stringify(meta.tags)) changedFields.push("tags");
       if (JSON.stringify(prevCap.examples) !== JSON.stringify(meta.examples)) changedFields.push("examples");
+      if (JSON.stringify(prevCap.dependencies ?? []) !== JSON.stringify(meta.dependencies ?? [])) changedFields.push("dependencies");
     }
 
     const metaNote = changedFields.length ? `  [updated: ${changedFields.join(", ")}]` : "";
