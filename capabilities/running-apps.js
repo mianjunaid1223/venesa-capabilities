@@ -40,6 +40,7 @@ if ($r.Count -eq 0) { '[]' } elseif ($r.Count -eq 1) { '[' + ($r[0] | ConvertTo-
       return await runPowerShell(psScript, [], 10000);
     } catch (e) {
       return JSON.stringify({
+        success: false,
         error: e instanceof Error ? e.message : String(e),
       });
     }

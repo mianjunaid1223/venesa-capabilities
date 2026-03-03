@@ -38,7 +38,7 @@ ConvertTo-Json -Compress
     try {
       return await runPowerShell(psScript, [], 10000);
     } catch (e) {
-      return JSON.stringify({ error: e.message });
+      return JSON.stringify({ success: false, error: e.message });
     }
   },
 };

@@ -28,21 +28,41 @@ Venesa fetches the raw capability file and loads it into its execution engine au
 
 - One capability per file
 - File extension must be `.js`
+- CommonJS only — `require` / `module.exports`. No `import`/`export`
 - Export exactly one object
-- Async handler required
+- `handler` must be `async`. No raw Promise chains
+- Every `handler` body wrapped in `try/catch`. Never throw unhandled
+- On error return `{ success: false, error: string }`. Never throw
+- No `console.log` or logging calls inside capability files
 - No side effects during import
+- No ranges in `dependencies` — exact versions only
+- No shared state between capabilities
 
 ## Example Capability
 
 ```javascript
-module.exports = {
-  name: "example",
-  description: "Example Venesa capability",
-  version: "1.0.0",
+'use strict';
 
-  async handler(params, context) {
-    return "example response";
-  }
+const { z } = require('zod');
+
+module.exports = {
+  name: 'example',
+  description: 'Example Venesa capability.',
+  returnType: 'data',
+  marker: 'silently',
+  tags: ['example'],
+
+  schema: z.object({
+    query: z.string().trim().min(1).describe('Input query.'),
+  }),
+
+  async handler({ query }) {
+    try {
+      return { success: true, result: query };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
 };
 ```
 
@@ -52,7 +72,7 @@ For the full specification including schema validation, return types, lifecycle 
 
 ## Available Capabilities
 
-This registry currently includes **12** capabilities:
+This registry currently includes **13** capabilities:
 
 | Name | Description | Tags |
 |------|-------------|------|
@@ -68,6 +88,7 @@ This registry currently includes **12** capabilities:
 | `getSystemInfo` | Reports CPU load, RAM usage, battery level, and system uptime | system, info, monitor |
 | `wifiPasswords` | Retrieves saved WiFi network credentials (redacted for security) | wifi, password, network |
 | `youtubeSearch` | Opens YouTube search results in the browser for a given query | web, search, youtube |
+| `convertCurrency` | Converts amounts between currencies using live exchange rates | currency, money, finance |
 
 ---
 
@@ -79,37 +100,66 @@ Venesa's internal reasoning logic treats both core features and community extens
 
 The architecture guarantees isolation; failed executions will be trapped and resolved cleanly by the orchestrator.
 
+## Field Reference
+
+| Field | Required | Type | Description |
+|---|---|---|---|
+| `name` | ✅ | `string` | Unique camelCase identifier. Token name in `[action: name]`. |
+| `description` | ✅ | `string` | Injected verbatim into LLM prompt. Be precise. |
+| `returnType` | ✅ | `string` | `data` \| `action` \| `ui` \| `memory` \| `hybrid` |
+| `schema` | ✅ | `ZodObject` | Zod schema for all params. Validated before handler runs. |
+| `handler` | ✅ | `async fn` | `async (validatedParams) => result`. Never throw unhandled. |
+| `marker` | — | `string` | `silently` \| `announce` \| `confirm` |
+| `ui` | — | `string` | `table` \| `key-value` \| `card-list` \| `command-list` |
+| `tags` | — | `string[]` | Discovery tags for the community browser. |
+| `config` | — | `object` | Static config (Zod schema). |
+| `lifecycle` | — | `object` | `onLoad`, `onUnload`, `onEnable`, `onDisable` hooks. |
+| `enabled` | — | `boolean` | Default `true`. Set to `false` to ship disabled. |
+| `dependencies` | — | `string[]` | Exact npm specifiers. No ranges. No git/http/file. |
+
 ## Schema Declaration
 
 ```javascript
-const { z } = require("zod");
+'use strict';
+
+const { z } = require('zod');
+
+// Declare exact-version dependencies. Platform installs them into an isolated
+// node_modules directory before first run. No ranges — exact versions only.
+// dependencies: ['<dep_name>@1.7.9']
 
 module.exports = {
-  // Mandatory Implementation
-  name: "my-capability",
-  description: "Provides precise system queries to the execution engine.",
-  returnType: "data", // Valid types: 'data' | 'action' | 'ui' | 'memory' | 'hybrid'
+  name: 'my-capability',
+  description: 'Provides precise system queries to the execution engine.',
+  returnType: 'data', // 'data' | 'action' | 'ui' | 'memory' | 'hybrid'
+  marker: 'silently', // 'silently' | 'announce' | 'confirm'
+  tags: ['monitoring', 'query'],
+  // dependencies: ['<dep_name>@1.7.9'],
+
   schema: z.object({
-    // Hard boundary parameter validation
     query: z.string().optional(),
   }),
-  handler: async (params) => {
-    /* logic */
-  }, // Asynchronous execution block
 
-  // Optional Parameters
-  ui: "table", // Render hints: 'table' | 'key-value' | 'card-list' | 'command-list'
-  marker: "announce", // Visibility markers: 'silently' | 'announce' | 'confirm'
-  tags: ["monitoring", "query"],
-  enabled: true,
+  // Optional static config
   config: z.object({
     /* params */
-  }), // Expected settings definitions
+  }),
+
+  // Optional lifecycle hooks
   lifecycle: {
     onLoad() {},
     onUnload() {},
     onEnable() {},
     onDisable() {},
+  },
+
+  async handler(params) {
+    try {
+      /* logic */
+      return { success: true, result: null };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
   },
 };
 ```
@@ -123,6 +173,7 @@ The `handler(params)` encapsulates the functional operation.
 - **Payload:** The `params` object contains variables already sanitized against the defined `schema`.
 - **Isolation:** Operational context like the application thread is abstracted away from the parameter intake. The capability solely acts upon structured parameters.
 - **Response Format:** Returns a native object, JSON string, or standard string.
+- **Error contract:** Always return `{ success: false, error: string }` on failure. Never throw.
 
 ### Schema Validation
 
@@ -133,7 +184,7 @@ Extracted inputs are hard-validated against the `schema` variable before trigger
 
 ### Configuration Binding
 
-capabilities can supply external variable structures via `config`, using the Zod syntax model. Values propagate internally at boot from application configurations or persistent stores. Ensure you attach `.default()` fallback states so modules perform cleanly immediately upon insertion.
+Capabilities can supply external variable structures via `config`, using the Zod syntax model. Values propagate internally at boot from application configurations or persistent stores. Ensure you attach `.default()` fallback states so modules perform cleanly immediately upon insertion.
 
 ## Handling Outputs
 
@@ -146,6 +197,76 @@ The `returnType` delineates to the LLM the behavioral path required post-executi
 | `ui`     | Forwards execution payload straight to the user-interface dispatcher.                                                                                                                                                                                       |
 | `memory` | Manipulates internal context variables without exposing events.                                                                                                                                                                                             |
 | `hybrid` | Execution response dictates adaptive behavior across the platform.                                                                                                                                                                                          |
+
+## DEP ENGINE — Isolated Dependencies
+
+Each capability gets fully isolated npm dependencies installed to:
+
+```
+~/.venesa/capabilities/<capabilityName>/node_modules/
+```
+
+No capability shares another's dependencies. Declare packages via the `dependencies` array using exact version specifiers:
+
+```javascript
+dependencies: ['<dep_name>@1.7.9', 'cheerio@1.0.0'],
+```
+
+**Allowed specifiers:**
+
+| Format | Example |
+|---|---|
+| Package name only | `"<dep_name>"` (pinned to latest at first install) |
+| Exact version | `"<dep_name>@1.7.9"` |
+| Scoped exact | `"@scope/pkg@2.0.0"` |
+
+**Rejected specifiers** — validation will reject these at install time:
+
+| Rejected | Reason |
+|---|---|
+| `"<dep_name>@^1.7.0"` | range (`^`) |
+| `"<dep_name>@~1.7"` | range (`~`) |
+| `"<dep_name>@>=1.0.0"` | range operator |
+| `"<dep_name>@*"` | wildcard |
+| `"git+https://…"` | git URL |
+| `"https://…"` | http URL |
+| `"file:…"` | local path |
+
+**Prefer pinned versions** (`"pkg@x.y.z"`) to guarantee reproducible installs. Simply `require('<dep_name>')` in your handler — the platform resolves from the capability-local `node_modules` automatically.
+
+> **Corrupted state:** If a dependency fails to install 5 consecutive times, the capability is marked corrupted in the UI and will not load. Fix the dependency spec and publish a new version to clear the flag.
+
+## NET GUARD — Network Offline Handling
+
+Any capability that makes HTTP/HTTPS calls must handle offline errors explicitly rather than letting the network call fail with an opaque error. Use error-code detection in the `catch` block:
+
+```javascript
+const <dep_name> = require('<dep_name>');
+
+async handler(params) {
+    try {
+        const res = await <dep_name>.get(`https://api.example.com?q=${encodeURIComponent(params.query)}`);
+        return { success: true, result: res.data };
+    } catch (err) {
+        const isOffline =
+            err.code === 'ENOTFOUND'   ||
+            err.code === 'ECONNREFUSED'||
+            err.code === 'ETIMEDOUT'   ||
+            err.code === 'ERR_NETWORK' ||
+            err.message?.toLowerCase().includes('network');
+
+        if (isOffline) {
+            return {
+                success: false,
+                error: 'No internet connection. Please check your connection and try again.',
+            };
+        }
+        return { success: false, error: err.message };
+    }
+},
+```
+
+Do **not** import connectivity modules from platform internals. The error-code pattern above is portable and requires no platform-specific imports.
 
 ## Utilizing Lifecycles
 

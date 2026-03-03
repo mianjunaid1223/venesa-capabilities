@@ -5,29 +5,28 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-const { z } = require('zod');
-const powershell = require('../src/lib/powershell');
-const runPowerShell = (script, args, timeout = 30000) => powershell.execute(script, args || [], timeout);
+const { z } = require("zod");
+const powershell = require("../src/lib/powershell");
+const runPowerShell = (script, args, timeout = 30000) =>
+  powershell.execute(script, args || [], timeout);
 
 module.exports = {
-    schema: z.object({}),
-    name: 'getInstalledApps',
-    description: 'Scans the Windows registry and returns up to 50 installed programs with their name, version, and publisher. Use when the user asks what software is installed, whether a specific program exists on the PC, or wants a list of installed applications.',
-    tags: ['app', 'installed', 'list'],
+  schema: z.object({}),
+  name: "getInstalledApps",
+  description:
+    "Scans the Windows registry and returns up to 50 installed programs with their name, version, and publisher. Use when the user asks what software is installed, whether a specific program exists on the PC, or wants a list of installed applications.",
+  tags: ["app", "installed", "list"],
 
-    returnType: 'data',
-    marker: 'silently',
-    ui: 'card-list',
+  returnType: "data",
+  marker: "silently",
+  ui: "card-list",
 
-    examples: [
+  examples: [
+    { user: "what apps are installed", action: "[action: getInstalledApps]" },
+  ],
 
-        { user: 'what apps are installed', action: '[action: getInstalledApps]' },
-
-    ],
-
-
-    async handler() {
-        const psScript = `
+  async handler() {
+    const psScript = `
 $ErrorActionPreference = 'SilentlyContinue'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $paths = @(
@@ -41,10 +40,10 @@ Select-Object @{N='Name';E={$_.DisplayName}}, @{N='Version';E={$_.DisplayVersion
 Sort-Object Name -Unique |
 Select-Object -First 50) | ConvertTo-Json -Compress
 `;
-        try {
-            return await runPowerShell(psScript, [], 30000);
-        } catch (e) {
-            return JSON.stringify({ error: e.message });
-        }
-    },
+    try {
+      return await runPowerShell(psScript, [], 30000);
+    } catch (e) {
+      return JSON.stringify({ success: false, error: e.message });
+    }
+  },
 };

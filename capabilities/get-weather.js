@@ -5,35 +5,38 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-const { z } = require('zod');
-const { shell } = require('electron');
+const { z } = require("zod");
+const { shell } = require("electron");
 
 module.exports = {
-    schema: z.object({ location: z.string().optional() }),
-    name: 'getWeather',
-    description: 'Opens a live Google weather search in the browser for a given city or location. Use when the user asks about the current weather, temperature, forecast, or conditions for any place. Accepts an optional location; defaults to generic weather if none is given.',
-    tags: ['weather', 'forecast'],
+  schema: z.object({ location: z.string().optional() }),
+  name: "getWeather",
+  description:
+    "Opens a live Google weather search in the browser for a given city or location. Use when the user asks about the current weather, temperature, forecast, or conditions for any place. Accepts an optional location; defaults to generic weather if none is given.",
+  tags: ["weather", "forecast"],
 
-    returnType: 'action',
-    marker: 'announce',
-    ui: null,
+  returnType: "action",
+  marker: "announce",
+  ui: null,
 
-    examples: [
-
-        { user: 'what is the weather in London', action: '[action: getWeather, location: London]' },
-
-    ],
-
-
-    async handler(params) {
-        const location = params?.location || '';
-        const query = location ? `weather ${location}` : 'weather';
-        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        try {
-            await shell.openExternal(url);
-            return location ? `Checking weather for ${location}` : 'Opening weather info';
-        } catch (e) {
-            return JSON.stringify({ success: false, error: e.message });
-        }
+  examples: [
+    {
+      user: "what is the weather in London",
+      action: "[action: getWeather, location: London]",
     },
+  ],
+
+  async handler(params) {
+    const location = params?.location || "";
+    const query = location ? `weather ${location}` : "weather";
+    const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+    try {
+      await shell.openExternal(url);
+      return location
+        ? `Checking weather for ${location}`
+        : "Opening weather info";
+    } catch (e) {
+      return JSON.stringify({ success: false, error: e.message });
+    }
+  },
 };

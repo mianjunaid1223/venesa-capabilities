@@ -7,7 +7,6 @@
 
 const { z } = require('zod');
 const powershell = require('../src/lib/powershell');
-const logger = require('../src/lib/logger');
 const runPowerShell = (script, args, timeout = 30000) => powershell.execute(script, args || [], timeout);
 
 module.exports = {
@@ -32,8 +31,6 @@ module.exports = {
 
     async handler(params) {
         const { networkName } = params || {};
-
-        logger.info(`[wifi-passwords] Retrieving WiFi passwords (network: ${networkName || 'all'})`);
 
         const psScript = networkName
             ? `

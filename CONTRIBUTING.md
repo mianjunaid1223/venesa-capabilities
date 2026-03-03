@@ -53,54 +53,76 @@ Every capability file must export a valid object using `module.exports`. The obj
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `name` | `string` | ✅ | Unique identifier for the capability |
-| `description` | `string` | ✅ | Human-readable description of what it does |
-| `version` | `string` | ✅ | Semantic version (e.g. `"1.0.0"`) |
-| `handler` | `async function` | ✅ | The execution entry point |
-| `schema` | `zod object` | recommended | Input validation schema |
-| `returnType` | `string` | recommended | One of: `data`, `action`, `ui`, `memory`, `hybrid` |
+| `name` | `string` | ✅ | Unique camelCase identifier for the capability |
+| `description` | `string` | ✅ | Injected into the AI prompt — be precise |
+| `handler` | `async function` | ✅ | The execution entry point. Must be wrapped in `try/catch` |
+| `schema` | `zod object` | ✅ | Input validation schema |
+| `returnType` | `string` | ✅ | One of: `data`, `action`, `ui`, `memory`, `hybrid` |
 | `tags` | `string[]` | optional | Categorization tags |
 | `ui` | `string` | optional | Render hint: `table`, `key-value`, `card-list`, `command-list` |
 | `marker` | `string` | optional | Visibility: `silently`, `announce`, `confirm` |
 | `enabled` | `boolean` | optional | Whether enabled by default (defaults to `true`) |
+| `dependencies` | `string[]` | optional | Exact npm specifiers only — e.g. `"<dep_name>@1.7.9"`. No ranges. |
 
 ### Minimal Valid Structure
 
 ```javascript
-module.exports = {
-  name: "my-capability",
-  description: "What this capability does",
-  version: "1.0.0",
+'use strict';
 
-  async handler(params, context) {
-    // your logic here
-    return result;
-  }
+const { z } = require('zod');
+
+module.exports = {
+  name: 'myCapability',
+  description: 'What this capability does.',
+  returnType: 'data',
+
+  schema: z.object({}),
+
+  async handler(params) {
+    try {
+      // your logic here
+      return { success: true, result: null };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
 };
 ```
 
 ### Recommended Full Structure
 
 ```javascript
+'use strict';
+
 const { z } = require('zod');
 
+// Declare exact-version npm dependencies (no ranges).
+// dependencies: ['<dep_name>@1.7.9']
+
 module.exports = {
-  name: "my-capability",
-  description: "What this capability does",
-  version: "1.0.0",
-  returnType: "data",
-  tags: ["category", "keyword"],
-  ui: "key-value",
-  marker: "announce",
+  name: 'myCapability',
+  description: 'What this capability does.',
+  returnType: 'data',
+  marker: 'silently',
+  tags: ['category', 'keyword'],
+  ui: 'key-value',
+  // dependencies: ['<dep_name>@1.7.9'],
 
   schema: z.object({
-    query: z.string().optional(),
+    query: z.string().trim().min(1).describe('Input query.'),
   }),
 
-  async handler(params, context) {
-    // your logic here
-    return result;
-  }
+  async handler({ query }) {
+    try {
+      // your logic here
+      return { success: true, result: query };
+    } catch (err) {
+      // For network capabilities, detect offline:
+      // const isOffline = err.code === 'ENOTFOUND' || err.code === 'ETIMEDOUT';
+      // if (isOffline) return { success: false, error: 'No internet connection. Please check your connection and try again.' };
+      return { success: false, error: err.message };
+    }
+  },
 };
 ```
 
@@ -111,12 +133,16 @@ module.exports = {
 All submissions must follow these rules to be accepted:
 
 - **Place files in `/capabilities/`** — capability file must live directly inside the `/capabilities/` directory (no sub-folders)
-- **No bundled dependencies** — use Node.js built-ins or packages already available in the Venesa runtime
+- **CommonJS only** — use `require` / `module.exports`. No `import`/`export`
+- **No bundled dependencies** — declare external packages via the `dependencies` array. No git, http, file:, or tarball entries. Exact versions only — no ranges (`^`, `~`, `>=`, `*`)
 - **No malicious execution** — no code that harms users, exfiltrates data, or executes unsolicited system commands
 - **No side effects during import** — the module must not execute logic when `require()`'d; all execution must be inside `handler`
-- **Metadata required** — `name`, `description`, and `version` fields are mandatory inside the export
+- **Metadata required** — `name`, `description`, `returnType`, and `schema` fields are mandatory
 - **One capability per file** — do not bundle multiple capabilities in a single file
-- **Async handler** — the `handler` function must be declared `async`
+- **Async handler with try/catch** — the `handler` must be `async` and every code path wrapped in `try/catch`. Never throw unhandled
+- **Error contract** — on failure return `{ success: false, error: string }`. Never throw
+- **No logging** — no `console.log` or any logger calls inside capability files
+- **Offline handling** — if your handler makes any HTTP call, detect and return the standard offline error on `ENOTFOUND`/`ETIMEDOUT`/`ECONNREFUSED`
 
 ---
 

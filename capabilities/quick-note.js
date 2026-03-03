@@ -8,7 +8,6 @@
 
 const { z } = require("zod");
 const memory = require("../src/brain/memory");
-const logger = require("../src/lib/logger");
 
 const BUCKET = "context";
 const KEY = "quickNotes";
@@ -17,9 +16,6 @@ function getNotes() {
   try {
     return memory.get(BUCKET, KEY) || [];
   } catch (e) {
-    logger.warn(
-      `[quick-note] Failed to read notes: ${e?.message ?? String(e)}`,
-    );
     return [];
   }
 }
@@ -29,9 +25,6 @@ function saveNotes(notes) {
     memory.set(BUCKET, KEY, notes);
     return true;
   } catch (e) {
-    logger.warn(
-      `[quick-note] Failed to save notes: ${e?.message ?? String(e)}`,
-    );
     return false;
   }
 }
@@ -64,8 +57,9 @@ module.exports = {
   ],
 
   async handler(params) {
-    const { operation, text, index } = params;
-    const notes = getNotes();
+    try {
+      const { operation, text, index } = params;
+      const notes = getNotes();
 
     switch (operation) {
       case "add": {
@@ -143,5 +137,8 @@ module.exports = {
       default:
         return JSON.stringify({ error: `Unknown operation: ${operation}` });
     }
+  } catch (e) {
+    return JSON.stringify({ success: false, error: e.message });
+  }
   },
 };

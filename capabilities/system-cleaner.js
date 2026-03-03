@@ -5,37 +5,47 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-const { z } = require('zod');
-const powershell = require('../src/lib/powershell');
-const runPowerShell = (script, args, timeout = 30000) => powershell.execute(script, args || [], timeout);
+const { z } = require("zod");
+const powershell = require("../src/lib/powershell");
+const runPowerShell = (script, args, timeout = 30000) =>
+  powershell.execute(script, args || [], timeout);
 
 module.exports = {
-    name: 'systemCleaner',
-    description: 'Frees up disk space by removing junk files from Windows Temp, System Temp, thumbnails, Chrome cache, and Edge cache. Three operations: scan (preview how much space can be recovered without deleting anything), clean (permanently delete the junk files and report freed MB), empty-recycle-bin (immediately empty the Recycle Bin). Use when the user wants to clean up, free space, or remove temporary files.',
-    tags: ['clean', 'temp', 'cache', 'recycle', 'space', 'junk'],
+  name: "systemCleaner",
+  description:
+    "Frees up disk space by removing junk files from Windows Temp, System Temp, thumbnails, Chrome cache, and Edge cache. Three operations: scan (preview how much space can be recovered without deleting anything), clean (permanently delete the junk files and report freed MB), empty-recycle-bin (immediately empty the Recycle Bin). Use when the user wants to clean up, free space, or remove temporary files.",
+  tags: ["clean", "temp", "cache", "recycle", "space", "junk"],
 
-    returnType: 'hybrid',
-    marker: 'announce',
-    ui: 'key-value',
+  returnType: "hybrid",
+  marker: "announce",
+  ui: "key-value",
 
-    schema: z.object({
-        operation: z.enum(['scan', 'clean', 'empty-recycle-bin']).describe('scan to preview, clean to delete, empty-recycle-bin to empty trash'),
-    }),
+  schema: z.object({
+    operation: z
+      .enum(["scan", "clean", "empty-recycle-bin"])
+      .describe(
+        "scan to preview, clean to delete, empty-recycle-bin to empty trash",
+      ),
+  }),
 
-    examples: [
+  examples: [
+    {
+      user: "clean up my system",
+      action: "[action: systemCleaner, operation: scan]",
+    },
 
-        { user: 'clean up my system', action: '[action: systemCleaner, operation: scan]' },
+    {
+      user: "empty the recycle bin",
+      action: "[action: systemCleaner, operation: empty-recycle-bin]",
+    },
+  ],
 
-        { user: 'empty the recycle bin', action: '[action: systemCleaner, operation: empty-recycle-bin]' },
+  async handler(params) {
+    try {
+      const { operation } = params;
 
-    ],
-
-
-    async handler(params) {
-        const { operation } = params;
-
-        if (operation === 'empty-recycle-bin') {
-            const ps = `
+      if (operation === "empty-recycle-bin") {
+        const ps = `
 try {
     Clear-RecycleBin -Force -ErrorAction Stop
     @{ success = $true; action = 'Recycle bin emptied' } | ConvertTo-Json -Compress
@@ -43,10 +53,10 @@ try {
     @{ success = $false; action = 'empty-recycle-bin'; error = $_.Exception.Message } | ConvertTo-Json -Compress
 }
 `;
-            return await runPowerShell(ps, [], 15000);
-        }
+        return await runPowerShell(ps, [], 15000);
+      }
 
-        const targetsBlock = `
+      const targetsBlock = `
 $targets = @(
     @{ name = 'Windows Temp';       path = "$env:TEMP" },
     @{ name = 'System Temp';        path = "$env:SystemRoot\\Temp" },
@@ -57,8 +67,10 @@ $targets = @(
 )
 `;
 
-        if (operation === 'scan') {
-            const ps = targetsBlock + `
+      if (operation === "scan") {
+        const ps =
+          targetsBlock +
+          `
 $results = @()
 $totalSize = 0
 foreach ($t in $targets) {
@@ -72,11 +84,13 @@ foreach ($t in $targets) {
 }
 @{ operation = 'scan'; targets = $results; totalRecoverableMB = [math]::Round($totalSize / 1MB, 2) } | ConvertTo-Json -Compress -Depth 3
 `;
-            return await runPowerShell(ps, [], 30000);
-        }
+        return await runPowerShell(ps, [], 30000);
+      }
 
-        if (operation === 'clean') {
-            const ps = targetsBlock + `
+      if (operation === "clean") {
+        const ps =
+          targetsBlock +
+          `
 $deletedFiles = 0
 $freedBytes = 0
 foreach ($t in $targets) {
@@ -94,9 +108,12 @@ foreach ($t in $targets) {
 }
 @{ operation = 'clean'; deletedFiles = $deletedFiles; freedMB = [math]::Round($freedBytes / 1MB, 2) } | ConvertTo-Json -Compress
 `;
-            return await runPowerShell(ps, [], 60000);
-        }
+        return await runPowerShell(ps, [], 60000);
+      }
 
-        return JSON.stringify({ error: 'Unknown operation' });
-    },
+      return JSON.stringify({ error: "Unknown operation" });
+    } catch (e) {
+      return JSON.stringify({ success: false, error: e.message });
+    }
+  },
 };
