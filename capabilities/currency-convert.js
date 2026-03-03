@@ -13,7 +13,7 @@ const { z } = require("zod");
 module.exports = {
   name: "convertCurrency",
   description:
-    "Converts a monetary amount from one currency to another using live exchange rates. Use when the user asks to convert money, asks how much X dollars/euros/pounds is in another currency, or wants to know the exchange rate between two currencies. Accepts the amount, source currency code (e.g. USD), and target currency code (e.g. EUR).",
+    "Converts a monetary amount from one currency to another using live exchange rates. Use when the user asks to convert money, exchange rates, or how much something costs in a different currency. Requires an amount, a source currency code, and a target currency code.",
   tags: ["currency", "money", "finance", "convert", "exchange"],
 
   returnType: "data",
