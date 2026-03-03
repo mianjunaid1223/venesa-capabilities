@@ -34,7 +34,12 @@ module.exports = {
         "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10 -Property Id, ProcessName, CPU, WorkingSet | ConvertTo-Json -Compress",
       );
     } catch (e) {
-      return JSON.stringify({ success: false, error: e.message });
+      const normalizedError = e && e.message
+        ? e.message
+        : typeof e === 'string'
+          ? e
+          : String(e);
+      return JSON.stringify({ success: false, error: normalizedError });
     }
   },
 };

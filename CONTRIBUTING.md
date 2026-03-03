@@ -118,7 +118,7 @@ module.exports = {
       return { success: true, result: query };
     } catch (err) {
       // For network capabilities, detect offline:
-      // const isOffline = err.code === 'ENOTFOUND' || err.code === 'ETIMEDOUT';
+      // const isOffline = err.code === 'ENOTFOUND' || err.code === 'ETIMEDOUT' || err.code === 'ECONNREFUSED';
       // if (isOffline) return { success: false, error: 'No internet connection. Please check your connection and try again.' };
       return { success: false, error: err.message };
     }

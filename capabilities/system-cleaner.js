@@ -111,7 +111,7 @@ foreach ($t in $targets) {
         return await runPowerShell(ps, [], 60000);
       }
 
-      return JSON.stringify({ error: "Unknown operation" });
+      return JSON.stringify({ success: false, error: "Unknown operation" });
     } catch (e) {
       return JSON.stringify({ success: false, error: e.message });
     }

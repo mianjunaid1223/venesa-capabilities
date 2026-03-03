@@ -105,6 +105,7 @@ module.exports = {
         err.code === "ENOTFOUND" ||
         err.code === "ECONNREFUSED" ||
         err.code === "ETIMEDOUT" ||
+        err.code === "ECONNABORTED" ||
         err.code === "ERR_NETWORK" ||
         err.message?.toLowerCase().includes("network");
 
