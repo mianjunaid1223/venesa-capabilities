@@ -8,16 +8,16 @@
  */
 
 const { z } = require("zod");
+// dependencies: ['axios@1.7.9']
 
 module.exports = {
   name: "convertCurrency",
   description:
-    "Converts a monetary amount from one currency to another using live exchange rates. Use when the user asks to convert money, exchange rates, or how much something costs in a different currency. Requires an amount, a source currency code, and a target currency code.",
+    "Converts an amount from one currency to another using live exchange rates. Provide the amount, source currency code (e.g. USD), and target currency code (e.g. EUR).",
   tags: ["currency", "money", "finance", "convert", "exchange"],
 
   returnType: "data",
   marker: "silently",
-  ui: null,
   dependencies: ["axios@1.7.9"],
 
   schema: z.object({
