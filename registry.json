@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-04T08:29:33.478Z",
+  "generated": "2026-03-04T09:54:34.282Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -7,8 +7,8 @@
   "capabilities": [
     {
       "name": "convertCurrency",
-      "description": "Converts a monetary amount from one currency to another using live exchange rates. Use when the user asks to convert money, exchange rates, or how much something costs in a different currency. Requires an amount, a source currency code, and a target currency code.",
-      "version": "1.0.5",
+      "description": "Converts an amount from one currency to another using live exchange rates. Provide the amount, source currency code (e.g. USD), and target currency code (e.g. EUR).",
+      "version": "1.0.6",
       "returnType": "data",
       "tags": [
         "currency",
@@ -37,7 +37,7 @@
       "dependencies": [
         "axios@1.7.9"
       ],
-      "hash": "cb4086d6d51a1cc5",
+      "hash": "1fe3c51b6157cfd9",
       "file": "currency-convert.js",
       "path": "capabilities/currency-convert.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/currency-convert.js"
