@@ -8,7 +8,6 @@
  */
 
 const { z } = require("zod");
-// dependencies: ['axios@1.7.9']
 
 module.exports = {
   name: "convertCurrency",
