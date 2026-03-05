@@ -41,19 +41,19 @@ Venesa fetches the raw capability file and loads it into its execution engine au
 ## Example Capability
 
 ```javascript
-'use strict';
+"use strict";
 
-const { z } = require('zod');
+const { z } = require("zod");
 
 module.exports = {
-  name: 'example',
-  description: 'Example Venesa capability.',
-  returnType: 'data',
-  marker: 'silently',
-  tags: ['example'],
+  name: "example",
+  description: "Example Venesa capability.",
+  returnType: "data",
+  marker: "silently",
+  tags: ["example"],
 
   schema: z.object({
-    query: z.string().trim().min(1).describe('Input query.'),
+    query: z.string().trim().min(1).describe("Input query."),
   }),
 
   async handler({ query }) {
@@ -70,28 +70,6 @@ For the full specification including schema validation, return types, lifecycle 
 
 ---
 
-## Available Capabilities
-
-This registry currently includes **13** capabilities:
-
-| Name | Description | Tags |
-|------|-------------|------|
-| `getDiskInfo` | Shows all fixed drives with total size, free space in GB, and usage percentage | system, disk, storage |
-| `getTime` | Returns the current local time and full date including day of the week | time, date |
-| `getWeather` | Opens a live Google weather search in the browser for a given city or location | weather, forecast |
-| `getInstalledApps` | Scans the Windows registry and returns up to 50 installed programs | app, installed, list |
-| `getNetworkInfo` | Returns all active network adapters and their IPv4 addresses | system, network, wifi |
-| `listProcesses` | Lists the top 10 processes consuming the most CPU | system, processes |
-| `quickNote` | Persistently saves and retrieves short text notes (add, list, search, delete, clear) | note, memo, reminder |
-| `listRunningApps` | Lists all applications with a visible window currently open on the desktop | system, apps, running |
-| `systemCleaner` | Frees up disk space by removing junk files (scan, clean, empty-recycle-bin) | clean, temp, cache, junk |
-| `getSystemInfo` | Reports CPU load, RAM usage, battery level, and system uptime | system, info, monitor |
-| `wifiPasswords` | Retrieves saved WiFi network credentials (redacted for security) | wifi, password, network |
-| `youtubeSearch` | Opens YouTube search results in the browser for a given query | web, search, youtube |
-| `convertCurrency` | Converts amounts between currencies using live exchange rates | currency, money, finance |
-
----
-
 # Capability Development Specification
 
 ## The Unified Protocol Standard
@@ -102,38 +80,38 @@ The architecture guarantees isolation; failed executions will be trapped and res
 
 ## Field Reference
 
-| Field | Required | Type | Description |
-|---|---|---|---|
-| `name` | ✅ | `string` | Unique camelCase identifier. Token name in `[action: name]`. |
-| `description` | ✅ | `string` | Injected verbatim into LLM prompt. Be precise. |
-| `returnType` | ✅ | `string` | `data` \| `action` \| `ui` \| `memory` \| `hybrid` |
-| `schema` | ✅ | `ZodObject` | Zod schema for all params. Validated before handler runs. |
-| `handler` | ✅ | `async fn` | `async (validatedParams) => result`. Never throw unhandled. |
-| `marker` | — | `string` | `silently` \| `announce` \| `confirm` |
-| `ui` | — | `string` | `table` \| `key-value` \| `card-list` \| `command-list` |
-| `tags` | — | `string[]` | Discovery tags for the community browser. |
-| `config` | — | `object` | Static config (Zod schema). |
-| `lifecycle` | — | `object` | `onLoad`, `onUnload`, `onEnable`, `onDisable` hooks. |
-| `enabled` | — | `boolean` | Default `true`. Set to `false` to ship disabled. |
-| `dependencies` | — | `string[]` | Exact npm specifiers. No ranges. No git/http/file. |
+| Field          | Required | Type        | Description                                                  |
+| -------------- | -------- | ----------- | ------------------------------------------------------------ |
+| `name`         | ✅       | `string`    | Unique camelCase identifier. Token name in `[action: name]`. |
+| `description`  | ✅       | `string`    | Injected verbatim into LLM prompt. Be precise.               |
+| `returnType`   | ✅       | `string`    | `data` \| `action` \| `ui` \| `memory` \| `hybrid`           |
+| `schema`       | ✅       | `ZodObject` | Zod schema for all params. Validated before handler runs.    |
+| `handler`      | ✅       | `async fn`  | `async (validatedParams) => result`. Never throw unhandled.  |
+| `marker`       | —        | `string`    | `silently` \| `announce` \| `confirm`                        |
+| `ui`           | —        | `string`    | `table` \| `key-value` \| `card-list` \| `command-list`      |
+| `tags`         | —        | `string[]`  | Discovery tags for the community browser.                    |
+| `config`       | —        | `object`    | Static config (Zod schema).                                  |
+| `lifecycle`    | —        | `object`    | `onLoad`, `onUnload`, `onEnable`, `onDisable` hooks.         |
+| `enabled`      | —        | `boolean`   | Default `true`. Set to `false` to ship disabled.             |
+| `dependencies` | —        | `string[]`  | Exact npm specifiers. No ranges. No git/http/file.           |
 
 ## Schema Declaration
 
 ```javascript
-'use strict';
+"use strict";
 
-const { z } = require('zod');
+const { z } = require("zod");
 
 // Declare exact-version dependencies. Platform installs them into an isolated
 // node_modules directory before first run. No ranges — exact versions only.
 // dependencies: ['<dep_name>@1.7.9']
 
 module.exports = {
-  name: 'my-capability',
-  description: 'Provides precise system queries to the execution engine.',
-  returnType: 'data', // 'data' | 'action' | 'ui' | 'memory' | 'hybrid'
-  marker: 'silently', // 'silently' | 'announce' | 'confirm'
-  tags: ['monitoring', 'query'],
+  name: "my-capability",
+  description: "Provides precise system queries to the execution engine.",
+  returnType: "data", // 'data' | 'action' | 'ui' | 'memory' | 'hybrid'
+  marker: "silently", // 'silently' | 'announce' | 'confirm'
+  tags: ["monitoring", "query"],
   // dependencies: ['<dep_name>@1.7.9'],
 
   schema: z.object({
@@ -214,23 +192,23 @@ dependencies: ['<dep_name>@1.7.9', 'cheerio@1.0.0'],
 
 **Allowed specifiers:**
 
-| Format | Example |
-|---|---|
+| Format            | Example                                            |
+| ----------------- | -------------------------------------------------- |
 | Package name only | `"<dep_name>"` (pinned to latest at first install) |
-| Exact version | `"<dep_name>@1.7.9"` |
-| Scoped exact | `"@scope/pkg@2.0.0"` |
+| Exact version     | `"<dep_name>@1.7.9"`                               |
+| Scoped exact      | `"@scope/pkg@2.0.0"`                               |
 
 **Rejected specifiers** — validation will reject these at install time:
 
-| Rejected | Reason |
-|---|---|
-| `"<dep_name>@^1.7.0"` | range (`^`) |
-| `"<dep_name>@~1.7"` | range (`~`) |
+| Rejected               | Reason         |
+| ---------------------- | -------------- |
+| `"<dep_name>@^1.7.0"`  | range (`^`)    |
+| `"<dep_name>@~1.7"`    | range (`~`)    |
 | `"<dep_name>@>=1.0.0"` | range operator |
-| `"<dep_name>@*"` | wildcard |
-| `"git+https://…"` | git URL |
-| `"https://…"` | http URL |
-| `"file:…"` | local path |
+| `"<dep_name>@*"`       | wildcard       |
+| `"git+https://…"`      | git URL        |
+| `"https://…"`          | http URL       |
+| `"file:…"`             | local path     |
 
 **Prefer pinned versions** (`"pkg@x.y.z"`) to guarantee reproducible installs. Simply `require('<dep_name>')` in your handler — the platform resolves from the capability-local `node_modules` automatically.
 
