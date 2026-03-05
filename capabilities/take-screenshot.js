@@ -104,7 +104,6 @@ module.exports = {
       const fullPath = path.join(folder, safeFilename);
       const psPath = fullPath.replace(/'/g, "''"); // escape single quotes
 
-      // PowerShell script: capture primary screen, save as PNG
       const captureScript = `
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
