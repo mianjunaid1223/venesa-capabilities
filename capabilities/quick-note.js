@@ -1,30 +1,36 @@
+"use strict";
+
 /**
  * ═══════════════════════════════════════════════════════════════
  *  capability: quick-note
  *  Capture and retrieve quick notes by voice or text.
- *  Persistent via memory system.
+ *  Persistent via local file storage.
  * ═══════════════════════════════════════════════════════════════
  */
 
 const { z } = require("zod");
-const memory = require("../src/brain/memory");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
-const BUCKET = "context";
-const KEY = "quickNotes";
+const NOTES_FILE = path.join(os.homedir(), ".venesa", "quick-notes.json");
 
 function getNotes() {
   try {
-    return memory.get(BUCKET, KEY) || [];
-  } catch (e) {
+    if (!fs.existsSync(NOTES_FILE)) return [];
+    return JSON.parse(fs.readFileSync(NOTES_FILE, "utf8"));
+  } catch {
     return [];
   }
 }
 
 function saveNotes(notes) {
   try {
-    memory.set(BUCKET, KEY, notes);
+    const dir = path.dirname(NOTES_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(NOTES_FILE, JSON.stringify(notes, null, 2), "utf8");
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }
@@ -63,29 +69,29 @@ module.exports = {
 
     switch (operation) {
       case "add": {
-        if (!text) return JSON.stringify({ error: "Note text required." });
+        if (!text) return { success: false, error: "Note text required." };
         notes.unshift({
           text,
           created: new Date().toISOString(),
           id: Date.now(),
         });
         const saved = saveNotes(notes);
-        if (!saved) return JSON.stringify({ error: "Failed to save note." });
-        return JSON.stringify({ success: true, total: notes.length });
+        if (!saved) return { success: false, error: "Failed to save note." };
+        return { success: true, total: notes.length };
       }
 
       case "list": {
-        if (notes.length === 0) return JSON.stringify({ empty: true });
+        if (notes.length === 0) return { success: true, empty: true, notes: [] };
         const items = notes.map((n, i) => ({
           index: i,
           text: n.text,
           date: new Date(n.created).toLocaleDateString(),
         }));
-        return JSON.stringify({ notes: items, total: items.length });
+        return { success: true, notes: items, total: items.length };
       }
 
       case "search": {
-        if (!text) return JSON.stringify({ error: "Search text required." });
+        if (!text) return { success: false, error: "Search text required." };
         const lower = text.toLowerCase();
         const results = [];
         for (let i = 0; i < notes.length; i++) {
@@ -101,7 +107,7 @@ module.exports = {
             });
           }
         }
-        return JSON.stringify({ results, total: results.length });
+        return { success: true, results, total: results.length };
       }
 
       case "delete": {
@@ -110,35 +116,30 @@ module.exports = {
           index === null ||
           typeof index !== "number"
         ) {
-          return JSON.stringify({
-            error: "Explicit numeric index required for delete.",
-          });
+          return { success: false, error: "Explicit numeric index required for delete." };
         }
         if (index < 0 || index >= notes.length) {
-          return JSON.stringify({ error: `No note at index ${index}.` });
+          return { success: false, error: `No note at index ${index}.` };
         }
         const removed = notes.splice(index, 1)[0];
         const saved = saveNotes(notes);
         if (!saved)
-          return JSON.stringify({ error: "Failed to save after delete." });
-        return JSON.stringify({ success: true, deleted: removed.text });
+          return { success: false, error: "Failed to save after delete." };
+        return { success: true, deleted: removed.text };
       }
 
       case "clear": {
         const saved = saveNotes([]);
         if (!saved)
-          return JSON.stringify({
-            success: false,
-            message: "Failed to clear notes.",
-          });
-        return JSON.stringify({ success: true, message: "All notes cleared." });
+          return { success: false, error: "Failed to clear notes." };
+        return { success: true, message: "All notes cleared." };
       }
 
       default:
-        return JSON.stringify({ error: `Unknown operation: ${operation}` });
+        return { success: false, error: `Unknown operation: ${operation}` };
     }
-  } catch (e) {
-    return JSON.stringify({ success: false, error: e.message });
+  } catch (err) {
+    return { success: false, error: err.message };
   }
   },
 };

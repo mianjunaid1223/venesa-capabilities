@@ -1,12 +1,13 @@
+"use strict";
+
 /**
  * ═══════════════════════════════════════════════════════════════
- *  SKILL: youtube-search
+ *  capability: youtube-search
  *  Search YouTube for a query and open results in browser.
  * ═══════════════════════════════════════════════════════════════
  */
 
 const { z } = require("zod");
-const { shell } = require("electron");
 
 module.exports = {
   schema: z.object({
@@ -29,16 +30,13 @@ module.exports = {
   ],
 
   async handler(params) {
-    const query = params.query;
-    if (!query || typeof query !== "string" || !query.trim()) {
-      return "No search query provided.";
-    }
-    const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query.trim())}`;
     try {
+      const { shell } = require("electron");
+      const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(params.query.trim())}`;
       await shell.openExternal(url);
-      return `Searching YouTube for: ${query}`;
-    } catch (e) {
-      return `Error opening browser: ${e.message}`;
+      return { success: true, result: `Searching YouTube for: ${params.query}` };
+    } catch (err) {
+      return { success: false, error: err.message };
     }
   },
 };

@@ -1,14 +1,28 @@
+"use strict";
+
 /**
  * ═══════════════════════════════════════════════════════════════
- *  SKILL: list-processes
+ *  capability: processes
  *  List top 10 CPU-heavy processes.
  * ═══════════════════════════════════════════════════════════════
  */
 
 const { z } = require("zod");
-const powershell = require("../src/lib/powershell");
-const runPowerShell = (script, args, timeout = 30000) =>
-  powershell.execute(script, args || [], timeout);
+const { execFile } = require("child_process");
+
+function runPowerShell(script, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    execFile(
+      "powershell",
+      ["-NoProfile", "-NonInteractive", "-Command", script],
+      { timeout: timeoutMs || 30000 },
+      (err, stdout) => {
+        if (err) return reject(err);
+        resolve(stdout.trim());
+      }
+    );
+  });
+}
 
 module.exports = {
   schema: z.object({}),
@@ -30,16 +44,22 @@ module.exports = {
 
   async handler() {
     try {
-      return await runPowerShell(
+      const raw = await runPowerShell(
         "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10 -Property Id, ProcessName, CPU, WorkingSet | ConvertTo-Json -Compress",
+        15000
       );
-    } catch (e) {
-      const normalizedError = e && e.message
-        ? e.message
-        : typeof e === 'string'
-          ? e
-          : String(e);
-      return JSON.stringify({ success: false, error: normalizedError });
+      if (!raw || !raw.trim()) {
+        return { success: false, error: "PowerShell returned no output", raw };
+      }
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (parseErr) {
+        return { success: false, error: `Failed to parse PowerShell output: ${parseErr.message}`, raw };
+      }
+      return { success: true, result: parsed };
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : String(err) };
     }
   },
 };

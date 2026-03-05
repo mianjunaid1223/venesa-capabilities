@@ -1,14 +1,28 @@
+"use strict";
+
 /**
  * ═══════════════════════════════════════════════════════════════
- *  SKILL: get-installed-apps
+ *  capability: installed-apps
  *  List installed applications.
  * ═══════════════════════════════════════════════════════════════
  */
 
 const { z } = require("zod");
-const powershell = require("../src/lib/powershell");
-const runPowerShell = (script, args, timeout = 30000) =>
-  powershell.execute(script, args || [], timeout);
+const { execFile } = require("child_process");
+
+function runPowerShell(script, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    execFile(
+      "powershell",
+      ["-NoProfile", "-NonInteractive", "-Command", script],
+      { timeout: timeoutMs || 30000 },
+      (err, stdout) => {
+        if (err) return reject(err);
+        resolve(stdout.trim());
+      }
+    );
+  });
+}
 
 module.exports = {
   schema: z.object({}),
@@ -41,9 +55,18 @@ Sort-Object Name -Unique |
 Select-Object -First 50) | ConvertTo-Json -Compress
 `;
     try {
-      return await runPowerShell(psScript, [], 30000);
-    } catch (e) {
-      return JSON.stringify({ success: false, error: e.message });
+      const raw = await runPowerShell(psScript, 30000);
+      if (!raw || !raw.trim()) return { success: true, result: [] };
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (parseErr) {
+        return { success: false, error: parseErr.message };
+      }
+      const result = Array.isArray(parsed) ? parsed : [parsed];
+      return { success: true, result };
+    } catch (err) {
+      return { success: false, error: err.message };
     }
   },
 };

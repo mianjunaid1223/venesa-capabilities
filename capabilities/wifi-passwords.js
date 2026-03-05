@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * ═══════════════════════════════════════════════════════════════
  *  capability: wifi-passwords
@@ -6,8 +8,21 @@
  */
 
 const { z } = require('zod');
-const powershell = require('../src/lib/powershell');
-const runPowerShell = (script, args, timeout = 30000) => powershell.execute(script, args || [], timeout);
+const { execFile } = require('child_process');
+
+function runPowerShell(script, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    execFile(
+      'powershell',
+      ['-NoProfile', '-NonInteractive', '-Command', script],
+      { timeout: timeoutMs || 30000 },
+      (err, stdout) => {
+        if (err) return reject(err);
+        resolve(stdout.trim());
+      }
+    );
+  });
+}
 
 module.exports = {
     name: 'wifiPasswords',
@@ -31,12 +46,15 @@ module.exports = {
 
     async handler(params) {
         const { networkName } = params || {};
+        const safeName = networkName
+            ? networkName.replace(/`/g, '``').replace(/"/g, '`"').replace(/'/g, "''")
+            : '';
 
         const psScript = networkName
             ? `
-param($NetName)
+$NetName = '${safeName}'
 $profile = netsh wlan show profile name="$NetName" key=clear 2>&1
-$keyLine = ($profile | Where-Object { $_ -match 'Key Content|Contenu de la|Schlüsselinhalt|Contenido de la clave|Clé de sécurité' } | Select-Object -First 1) -replace '.*:\s*', ''
+$keyLine = ($profile | Where-Object { $_ -match 'Key Content|Contenu de la|Schlüsselinhalt|Contenido de la clave|Clé de sécurité' } | Select-Object -First 1) -replace '.*:\\s*', ''
 if (-not $keyLine) {
     $keyLine = 'UNKNOWN'
 }
@@ -77,9 +95,10 @@ if ($results.Count -eq 0) {
 `;
         try {
             const timeout = networkName ? 15000 : 30000;
-            return await runPowerShell(psScript, networkName ? [networkName] : [], timeout);
-        } catch (e) {
-            return JSON.stringify({ error: e?.message ?? String(e) });
+            const raw = await runPowerShell(psScript, timeout);
+            return { success: true, result: JSON.parse(raw) };
+        } catch (err) {
+            return { success: false, error: err?.message ?? String(err) };
         }
     },
 };

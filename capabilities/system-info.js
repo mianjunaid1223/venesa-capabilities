@@ -1,14 +1,28 @@
+"use strict";
+
 /**
  * ═══════════════════════════════════════════════════════════════
- *  SKILL: get-system-info
+ *  capability: system-info
  *  Get CPU, RAM, battery, and uptime info.
  * ═══════════════════════════════════════════════════════════════
  */
 
 const { z } = require("zod");
-const powershell = require("../src/lib/powershell");
-const runPowerShell = (script, args, timeout = 30000) =>
-  powershell.execute(script, args || [], timeout);
+const { execFile } = require("child_process");
+
+function runPowerShell(script, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    execFile(
+      "powershell",
+      ["-NoProfile", "-NonInteractive", "-Command", script],
+      { timeout: timeoutMs || 30000 },
+      (err, stdout) => {
+        if (err) return reject(err);
+        resolve(stdout.trim());
+      }
+    );
+  });
+}
 
 module.exports = {
   schema: z.object({}),
@@ -41,9 +55,10 @@ $battery = Get-CimInstance Win32_Battery -Property EstimatedChargeRemaining -Err
 } | ConvertTo-Json -Compress
 `;
     try {
-      return await runPowerShell(psScript);
-    } catch (e) {
-      return JSON.stringify({ success: false, error: e.message });
+      const raw = await runPowerShell(psScript, 15000);
+      return { success: true, result: JSON.parse(raw) };
+    } catch (err) {
+      return { success: false, error: err.message };
     }
   },
 };

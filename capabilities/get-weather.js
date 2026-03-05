@@ -1,12 +1,13 @@
+"use strict";
+
 /**
  * ═══════════════════════════════════════════════════════════════
- *  SKILL: get-weather
+ *  capability: get-weather
  *  Open weather information for a location.
  * ═══════════════════════════════════════════════════════════════
  */
 
 const { z } = require("zod");
-const { shell } = require("electron");
 
 module.exports = {
   schema: z.object({ location: z.string().optional() }),
@@ -27,16 +28,15 @@ module.exports = {
   ],
 
   async handler(params) {
-    const location = params?.location || "";
-    const query = location ? `weather ${location}` : "weather";
-    const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
     try {
+      const { shell } = require("electron");
+      const location = params?.location || "";
+      const query = location ? `weather ${location}` : "weather";
+      const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
       await shell.openExternal(url);
-      return location
-        ? `Checking weather for ${location}`
-        : "Opening weather info";
-    } catch (e) {
-      return JSON.stringify({ success: false, error: e.message });
+      return { success: true, result: location ? `Checking weather for ${location}` : "Opening weather info" };
+    } catch (err) {
+      return { success: false, error: err.message };
     }
   },
 };

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * ═══════════════════════════════════════════════════════════════
  *  capability: system-cleaner
@@ -6,9 +8,21 @@
  */
 
 const { z } = require("zod");
-const powershell = require("../src/lib/powershell");
-const runPowerShell = (script, args, timeout = 30000) =>
-  powershell.execute(script, args || [], timeout);
+const { execFile } = require("child_process");
+
+function runPowerShell(script, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    execFile(
+      "powershell",
+      ["-NoProfile", "-NonInteractive", "-Command", script],
+      { timeout: timeoutMs || 30000 },
+      (err, stdout) => {
+        if (err) return reject(err);
+        resolve(stdout.trim());
+      }
+    );
+  });
+}
 
 module.exports = {
   name: "systemCleaner",
@@ -17,7 +31,7 @@ module.exports = {
   tags: ["clean", "temp", "cache", "recycle", "space", "junk"],
 
   returnType: "hybrid",
-  marker: "announce",
+  marker: "confirm",
   ui: "key-value",
 
   schema: z.object({
@@ -53,7 +67,9 @@ try {
     @{ success = $false; action = 'empty-recycle-bin'; error = $_.Exception.Message } | ConvertTo-Json -Compress
 }
 `;
-        return await runPowerShell(ps, [], 15000);
+        const rawRb = await runPowerShell(ps, 15000);
+        const inner = JSON.parse(rawRb);
+        return { success: inner.success, result: inner };
       }
 
       const targetsBlock = `
@@ -84,7 +100,8 @@ foreach ($t in $targets) {
 }
 @{ operation = 'scan'; targets = $results; totalRecoverableMB = [math]::Round($totalSize / 1MB, 2) } | ConvertTo-Json -Compress -Depth 3
 `;
-        return await runPowerShell(ps, [], 30000);
+        const rawScan = await runPowerShell(ps, 30000);
+        return { success: true, result: JSON.parse(rawScan) };
       }
 
       if (operation === "clean") {
@@ -108,12 +125,13 @@ foreach ($t in $targets) {
 }
 @{ operation = 'clean'; deletedFiles = $deletedFiles; freedMB = [math]::Round($freedBytes / 1MB, 2) } | ConvertTo-Json -Compress
 `;
-        return await runPowerShell(ps, [], 60000);
+        const rawClean = await runPowerShell(ps, 60000);
+        return { success: true, result: JSON.parse(rawClean) };
       }
 
-      return JSON.stringify({ success: false, error: "Unknown operation" });
-    } catch (e) {
-      return JSON.stringify({ success: false, error: e.message });
+      return { success: false, error: "Unknown operation" };
+    } catch (err) {
+      return { success: false, error: err.message };
     }
   },
 };
