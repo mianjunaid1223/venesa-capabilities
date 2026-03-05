@@ -33,7 +33,7 @@ module.exports = {
     "Takes a screenshot of the entire desktop and saves it as a PNG file. " +
     "Accepts an optional save path (defaults to the user's desktop folder) and an optional filename " +
     "(defaults to screenshot.png). Optionally opens the saved file in a specified application such as Paint (mspaint). " +
-    "Use whenever the user asks to take, capture, or save a screenshot of their screen or desktop.",
+    "Use whenever the user asks to take, capture, or save a screenshot of their screen or desktop..",
 
   returnType: "action",
   marker: "announce",
