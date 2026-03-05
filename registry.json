@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-05T15:50:44.349Z",
+  "generated": "2026-03-05T16:15:45.116Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -298,8 +298,8 @@
     },
     {
       "name": "takeScreenshot",
-      "description": "Takes a full-desktop screenshot and saves it as a PNG file. savePath defaults to the user's Desktop. filename defaults to screenshot.png. openWith defaults to 'mspaint' (Microsoft Paint) — always pass openWith: mspaint unless the user says otherwise. Use whenever the user asks to take, capture, or save a screenshot of their screen or desktop, or asks to open a screenshot in Paint or any other application.",
-      "version": "1.0.3",
+      "description": "Takes a full-desktop screenshot and saves it as a PNG file. savePath defaults to the user's Desktop. filename defaults to screenshot.png. openWith defaults to 'mspaint' (Microsoft Paint) — always pass openWith: mspaint unless the user says otherwise. Use whenever the user asks to take, capture, or save a screenshot of their screen or desktop; or asks to open a screenshot in Paint or any other application.",
+      "version": "1.0.4",
       "returnType": "action",
       "tags": [
         "screenshot",
@@ -341,7 +341,7 @@
       "dependencies": [
         "zod"
       ],
-      "hash": "ba18030ac5c23dba",
+      "hash": "f6a6ce9b6cbc2cfc",
       "file": "take-screenshot.js",
       "path": "capabilities/take-screenshot.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/take-screenshot.js"
