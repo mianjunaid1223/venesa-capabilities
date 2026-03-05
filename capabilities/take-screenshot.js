@@ -13,7 +13,6 @@ const { execFile } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
-const { dependencies } = require("./currency-convert");
 
 function runPowerShellFile(script, timeoutMs) {
   return new Promise((resolve, reject) => {
@@ -50,10 +49,13 @@ module.exports = {
   name: "takeScreenshot",
   description:
     "Takes a full-desktop screenshot and saves it as a PNG file. " +
-    "savePath defaults to the user's Desktop. filename defaults to screenshot.png. " +
-    "openWith defaults to 'mspaint' (Microsoft Paint) — always pass openWith: mspaint unless the user says otherwise. " +
-    "Use whenever the user asks to take, capture, or save a screenshot of their screen or desktop; " +
-    "or asks to open a screenshot in Paint or any other application.",
+    "savePath accepts a shorthand folder name: 'Desktop' (default), 'Documents', 'Downloads', 'Pictures', or a full absolute path. " +
+    "filename defaults to 'screenshot.png'. " +
+    "openWith is OPTIONAL — omit it entirely unless the user explicitly asks to open the screenshot. " +
+    "If the user asks to open it without naming an app, use openWith: 'default' to open with the system default image viewer. " +
+    "Only set openWith to a specific executable (e.g. 'mspaint') if the user explicitly names that app. " +
+    "NEVER put a full Windows path with a username in savePath — use the shorthand names instead. " +
+    "Use whenever the user asks to take, capture, or save a screenshot of their screen or desktop.",
 
   returnType: "action",
   marker: "announce",
@@ -65,7 +67,8 @@ module.exports = {
       .string()
       .optional()
       .describe(
-        "Absolute folder path where the screenshot is saved. Defaults to the user's Desktop.",
+        "Where to save the screenshot. Use a shorthand: 'Desktop' (default), 'Documents', 'Downloads', 'Pictures'. " +
+          "Or provide a full absolute path. Never guess a Windows username — use shorthands.",
       ),
     filename: z
       .string()
@@ -77,14 +80,22 @@ module.exports = {
       .string()
       .optional()
       .describe(
-        "Executable to open the saved file with. Use 'mspaint' for Microsoft Paint. Defaults to 'mspaint'.",
+        "Executable to open the saved file with. Use 'default' to open with the system default image viewer, or a specific app name like 'mspaint' for Paint. Omit entirely if the user did not ask to open the file.",
       ),
   }),
 
   examples: [
     {
       user: "take a screenshot",
-      action: "[action: takeScreenshot, openWith: mspaint]",
+      action: "[action: takeScreenshot]",
+    },
+    {
+      user: "capture my screen",
+      action: "[action: takeScreenshot]",
+    },
+    {
+      user: "take a screenshot and open it",
+      action: "[action: takeScreenshot, openWith: default]",
     },
     {
       user: "take a screenshot and open it in Paint",
@@ -95,27 +106,47 @@ module.exports = {
       action: "[action: takeScreenshot, openWith: mspaint]",
     },
     {
-      user: "take a screenshot and save it to my desktop and open it in Paint",
-      action:
-        "[action: takeScreenshot, savePath: C:\\Users\\username\\Desktop, openWith: mspaint]",
+      user: "take a screenshot and save it to my desktop",
+      action: "[action: takeScreenshot]",
+    },
+    {
+      user: "take a screenshot, save it to my desktop and open it in Paint",
+      action: "[action: takeScreenshot, openWith: mspaint]",
+    },
+    {
+      user: "take a screenshot and save it to my Documents folder",
+      action: "[action: takeScreenshot, savePath: Documents]",
     },
     {
       user: "take a screenshot and save it to my Documents folder and open it in Paint",
-      action:
-        "[action: takeScreenshot, savePath: C:\\Users\\username\\Documents, openWith: mspaint]",
+      action: "[action: takeScreenshot, savePath: Documents, openWith: mspaint]",
     },
     {
-      user: "capture my screen",
-      action: "[action: takeScreenshot, openWith: mspaint]",
+      user: "take a screenshot and save it to my downloads folder",
+      action: "[action: takeScreenshot, savePath: Downloads]",
+    },
+    {
+      user: "take a screenshot and save it to my pictures",
+      action: "[action: takeScreenshot, savePath: Pictures]",
     },
   ],
 
   async handler(params) {
     try {
-      const folder =
-        params.savePath && params.savePath.trim()
-          ? params.savePath.trim()
-          : path.join(os.homedir(), "Desktop");
+      // Resolve shorthand folder names to real absolute paths
+      const KNOWN_FOLDERS = {
+        desktop: path.join(os.homedir(), "Desktop"),
+        documents: path.join(os.homedir(), "Documents"),
+        downloads: path.join(os.homedir(), "Downloads"),
+        pictures: path.join(os.homedir(), "Pictures"),
+        videos: path.join(os.homedir(), "Videos"),
+        music: path.join(os.homedir(), "Music"),
+      };
+
+      const rawSavePath = params.savePath && params.savePath.trim();
+      const folder = rawSavePath
+        ? KNOWN_FOLDERS[rawSavePath.toLowerCase()] || rawSavePath
+        : path.join(os.homedir(), "Desktop");
 
       const rawName =
         params.filename && params.filename.trim()
@@ -180,19 +211,40 @@ Write-Output $result
         };
       }
 
-      const openWith =
-        params.openWith && params.openWith.trim()
-          ? params.openWith.trim()
-          : "mspaint";
+      const openWith = params.openWith && params.openWith.trim()
+        ? params.openWith.trim()
+        : null;
 
-      const openScript = `Start-Process -FilePath "${openWith}" -ArgumentList '"${fullPath.replace(/`/g, "``").replace(/"/g, '`"')}"'`;
-      await runPowerShellFile(openScript, 10000).catch(() => {});
+      let message = `Screenshot saved to '${fullPath}'.`;
 
-      const appLabel = openWith === "mspaint" ? "Microsoft Paint" : openWith;
+      if (openWith) {
+        // Escape fullPath for PowerShell single-quoted string (double each ')
+        const psFullPath = fullPath.replace(/'/g, "''");
+        // Escape openWith for PowerShell double-quoted string (backtick then quote)
+        const psOpenWith = openWith.replace(/`/g, "``").replace(/"/g, '`"');
+
+        const openScript = openWith === "default"
+          ? `Start-Process '${psFullPath}'`
+          : `Start-Process -FilePath "${psOpenWith}" -ArgumentList '"${psFullPath.replace(/"/g, '`"')}"'`;
+
+        try {
+          await runPowerShellFile(openScript, 10000);
+          const appLabel = openWith === "default" ? "the default image viewer"
+            : openWith === "mspaint" ? "Microsoft Paint"
+            : openWith;
+          message = `Screenshot saved to '${fullPath}' and opened in ${appLabel}.`;
+        } catch (openErr) {
+          return {
+            success: false,
+            error: `Screenshot was saved to '${fullPath}' but could not be opened with '${openWith}': ${openErr.message}`,
+            path: fullPath,
+          };
+        }
+      }
 
       return {
         success: true,
-        message: `Screenshot saved to '${fullPath}' and opened in ${appLabel}.`,
+        message,
         path: fullPath,
       };
     } catch (err) {
