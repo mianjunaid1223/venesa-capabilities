@@ -52,7 +52,7 @@ module.exports = {
     "Takes a full-desktop screenshot and saves it as a PNG file. " +
     "savePath defaults to the user's Desktop. filename defaults to screenshot.png. " +
     "openWith defaults to 'mspaint' (Microsoft Paint) — always pass openWith: mspaint unless the user says otherwise. " +
-    "Use whenever the user asks to take, capture, or save a screenshot of their screen or desktop, " +
+    "Use whenever the user asks to take, capture, or save a screenshot of their screen or desktop; " +
     "or asks to open a screenshot in Paint or any other application.",
 
   returnType: "action",
