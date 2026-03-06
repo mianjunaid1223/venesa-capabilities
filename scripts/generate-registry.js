@@ -215,7 +215,6 @@ function extractMeta(exp) {
   if (!exp || typeof exp !== "object") return null;
 
   const str = (v) => (typeof v === "string" ? v : null);
-  const bool = (v) => (typeof v === "boolean" ? v : true);
   const arr = (v) =>
     Array.isArray(v) ? v.filter((x) => typeof x === "string") : [];
 
@@ -236,7 +235,6 @@ function extractMeta(exp) {
     tags: arr(exp.tags),
     ui: str(exp.ui) ?? null,
     marker: str(exp.marker) ?? null,
-    enabled: bool(exp.enabled),
     examples,
     ...(arr(exp.dependencies).length > 0 ? { dependencies: arr(exp.dependencies) } : {}),
   };
@@ -325,7 +323,7 @@ for (const { dir, prefix } of SCAN_DIRS) {
 
     const changedFields = [];
     if (prevCap) {
-      for (const key of ["description", "returnType", "ui", "marker", "enabled"]) {
+      for (const key of ["description", "returnType", "ui", "marker"]) {
         if (JSON.stringify(prevCap[key]) !== JSON.stringify(meta[key])) {
           changedFields.push(key);
         }
