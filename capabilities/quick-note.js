@@ -9,31 +9,6 @@
  */
 
 const { z } = require("zod");
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
-
-const NOTES_FILE = path.join(os.homedir(), ".venesa", "quick-notes.json");
-
-function getNotes() {
-  try {
-    if (!fs.existsSync(NOTES_FILE)) return [];
-    return JSON.parse(fs.readFileSync(NOTES_FILE, "utf8"));
-  } catch {
-    return [];
-  }
-}
-
-function saveNotes(notes) {
-  try {
-    const dir = path.dirname(NOTES_FILE);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(NOTES_FILE, JSON.stringify(notes, null, 2), "utf8");
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 module.exports = {
   name: "quickNote",
@@ -41,16 +16,16 @@ module.exports = {
     "Persistently saves and retrieves short text notes using the memory system. Supports five operations: add (save a new note), list (show all notes), search (find notes by keyword), delete (remove a note by index), clear (wipe all notes). Use whenever the user wants to save, recall, find, or delete a note or reminder.",
   tags: ["note", "memo", "reminder", "save", "write"],
 
-  returnType: "hybrid",
+  returnType: "memory",
   marker: "silently",
   ui: null,
 
   schema: z.object({
     operation: z
       .enum(["add", "list", "search", "delete", "clear"])
-      .describe("Operation"),
-    text: z.string().optional().describe("Note text (for add/search)"),
-    index: z.number().optional().describe("Note index (for delete)"),
+      .describe("Operation to perform: 'add' to save a new note, 'list' to show all notes, 'search' to find notes by keyword, 'delete' to remove a note by index, 'clear' to wipe all notes."),
+    text: z.string().optional().describe("Note text for 'add', or search keyword for 'search'."),
+    index: z.number().int().optional().describe("Zero-based index of the note to delete. Required for 'delete'."),
   }),
 
   examples: [
@@ -64,6 +39,32 @@ module.exports = {
 
   async handler(params) {
     try {
+      const fs = require("fs");
+      const path = require("path");
+      const os = require("os");
+
+      const NOTES_FILE = path.join(os.homedir(), ".venesa", "quick-notes.json");
+
+      function getNotes() {
+        try {
+          if (!fs.existsSync(NOTES_FILE)) return [];
+          return JSON.parse(fs.readFileSync(NOTES_FILE, "utf8"));
+        } catch {
+          return [];
+        }
+      }
+
+      function saveNotes(notes) {
+        try {
+          const dir = path.dirname(NOTES_FILE);
+          if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+          fs.writeFileSync(NOTES_FILE, JSON.stringify(notes, null, 2), "utf8");
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
       const { operation, text, index } = params;
       const notes = getNotes();
 

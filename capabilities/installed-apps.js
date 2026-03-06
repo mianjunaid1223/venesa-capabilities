@@ -29,7 +29,7 @@ module.exports = {
   name: "getInstalledApps",
   description:
     "Scans the Windows registry and returns up to 50 installed programs with their name, version, and publisher. Use when the user asks what software is installed, whether a specific program exists on the PC, or wants a list of installed applications.",
-  tags: ["app", "installed", "list"],
+  tags: ["system", "apps", "installed"],
 
   returnType: "data",
   marker: "silently",

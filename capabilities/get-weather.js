@@ -10,7 +10,7 @@
 const { z } = require("zod");
 
 module.exports = {
-  schema: z.object({ location: z.string().optional() }),
+  schema: z.object({ location: z.string().optional().describe("City or location name to check the weather for, e.g. 'London' or 'New York'. Omit to get a generic weather page.") }),
   name: "getWeather",
   description:
     "Opens a live Google weather search in the browser for a given city or location. Use when the user asks about the current weather, temperature, forecast, or conditions for any place. Accepts an optional location; defaults to generic weather if none is given.",

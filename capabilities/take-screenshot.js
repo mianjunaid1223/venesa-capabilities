@@ -48,39 +48,27 @@ function runPowerShellFile(script, timeoutMs) {
 module.exports = {
   name: "takeScreenshot",
   description:
-    "Takes a full-desktop screenshot and saves it as a PNG file. " +
-    "savePath accepts a shorthand folder name: 'Desktop' (default), 'Documents', 'Downloads', 'Pictures', or a full absolute path. " +
-    "filename defaults to 'screenshot.png'. " +
-    "openWith is OPTIONAL — omit it entirely unless the user explicitly asks to open the screenshot. " +
-    "If the user asks to open it without naming an app, use openWith: 'default' to open with the system default image viewer. " +
-    "Only set openWith to a specific executable (e.g. 'mspaint') if the user explicitly names that app. " +
-    "NEVER put a full Windows path with a username in savePath — use the shorthand names instead. " +
-    "Use whenever the user asks to take, capture, or save a screenshot of their screen or desktop.",
+    "Takes a full-desktop screenshot and saves it as a PNG file, then optionally opens it in an application. Use when the user asks to capture, take, or save a screenshot of their screen. Accepts an optional save folder (defaults to Desktop), filename, and app to open the file with.",
 
   returnType: "action",
   marker: "announce",
-  tags: ["screenshot", "capture", "screen", "desktop", "image", "paint"],
-  enabled: true,
-  dependencies: ["zod"],
+  tags: ["screenshot", "capture", "screen", "image"],
   schema: z.object({
     savePath: z
       .string()
-      .optional()
+      .default("{{user.desktop}}")
       .describe(
-        "Where to save the screenshot. Use a shorthand: 'Desktop' (default), 'Documents', 'Downloads', 'Pictures'. " +
-          "Or provide a full absolute path. Never guess a Windows username — use shorthands.",
+        "Folder path to save the screenshot. Defaults to {{user.desktop}}. Supports tokens: {{user.desktop}}, {{user.documents}}, {{user.downloads}}, {{user.pictures}}.",
       ),
     filename: z
       .string()
       .optional()
-      .describe(
-        "Filename including .png extension. Defaults to 'screenshot.png'.",
-      ),
+      .describe("Filename including .png extension. Defaults to 'screenshot.png'."),
     openWith: z
       .string()
       .optional()
       .describe(
-        "Executable to open the saved file with. Use 'default' to open with the system default image viewer, or a specific app name like 'mspaint' for Paint. Omit entirely if the user did not ask to open the file.",
+        "App to open the saved file with. Use 'default' for the system default image viewer, or a specific executable name like 'mspaint'. Omit entirely if the user did not ask to open the file.",
       ),
   }),
 
@@ -115,38 +103,25 @@ module.exports = {
     },
     {
       user: "take a screenshot and save it to my Documents folder",
-      action: "[action: takeScreenshot, savePath: Documents]",
+      action: "[action: takeScreenshot, savePath: {{user.documents}}]",
     },
     {
       user: "take a screenshot and save it to my Documents folder and open it in Paint",
-      action: "[action: takeScreenshot, savePath: Documents, openWith: mspaint]",
+      action: "[action: takeScreenshot, savePath: {{user.documents}}, openWith: mspaint]",
     },
     {
       user: "take a screenshot and save it to my downloads folder",
-      action: "[action: takeScreenshot, savePath: Downloads]",
+      action: "[action: takeScreenshot, savePath: {{user.downloads}}]",
     },
     {
       user: "take a screenshot and save it to my pictures",
-      action: "[action: takeScreenshot, savePath: Pictures]",
+      action: "[action: takeScreenshot, savePath: {{user.pictures}}]",
     },
   ],
 
   async handler(params) {
     try {
-      // Resolve shorthand folder names to real absolute paths
-      const KNOWN_FOLDERS = {
-        desktop: path.join(os.homedir(), "Desktop"),
-        documents: path.join(os.homedir(), "Documents"),
-        downloads: path.join(os.homedir(), "Downloads"),
-        pictures: path.join(os.homedir(), "Pictures"),
-        videos: path.join(os.homedir(), "Videos"),
-        music: path.join(os.homedir(), "Music"),
-      };
-
-      const rawSavePath = params.savePath && params.savePath.trim();
-      const folder = rawSavePath
-        ? KNOWN_FOLDERS[rawSavePath.toLowerCase()] || rawSavePath
-        : path.join(os.homedir(), "Desktop");
+      const folder = params.savePath.trim();
 
       const rawName =
         params.filename && params.filename.trim()

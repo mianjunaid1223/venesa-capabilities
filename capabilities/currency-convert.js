@@ -90,14 +90,16 @@ module.exports = {
 
       return {
         success: true,
-        from: from.toUpperCase(),
-        to: toUpper,
-        amount,
-        converted: parseFloat(converted.toFixed(4)),
-        rate: parseFloat(rate.toFixed(6)),
-        summary: `${amount} ${from.toUpperCase()} = ${converted.toLocaleString("en-US", { maximumFractionDigits: 2 })} ${toUpper}`,
-        rateInfo: `1 ${from.toUpperCase()} = ${rateDisplay} ${toUpper}`,
-        updatedAt: data.time_last_update_utc,
+        result: {
+          from: from.toUpperCase(),
+          to: toUpper,
+          amount,
+          converted: parseFloat(converted.toFixed(4)),
+          rate: parseFloat(rate.toFixed(6)),
+          summary: `${amount} ${from.toUpperCase()} = ${converted.toLocaleString("en-US", { maximumFractionDigits: 2 })} ${toUpper}`,
+          rateInfo: `1 ${from.toUpperCase()} = ${rateDisplay} ${toUpper}`,
+          updatedAt: data.time_last_update_utc,
+        },
       };
     } catch (err) {
       const isOffline =
