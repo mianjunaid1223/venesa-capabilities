@@ -1,9 +1,9 @@
 {
-  "generated": "2026-03-06T20:20:38.354Z",
+  "generated": "2026-03-06T20:24:03.484Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
-  "count": 14,
+  "count": 13,
   "capabilities": [
     {
       "name": "convertCurrency",
@@ -295,46 +295,6 @@
       "file": "system-info.js",
       "path": "capabilities/system-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-info.js"
-    },
-    {
-      "name": "takeScreenshot",
-      "description": "Take a full-screen screenshot. Can save to any path (default: ~/Pictures/Screenshots), use a custom filename, and open the result with any application, based on what user wants",
-      "version": "1.0.6",
-      "returnType": "action",
-      "tags": [
-        "screen",
-        "screenshot",
-        "capture"
-      ],
-      "ui": null,
-      "marker": "announce",
-      "enabled": true,
-      "examples": [
-        {
-          "user": "take a screenshot",
-          "action": "[action: takeScreenshot]"
-        },
-        {
-          "user": "capture my screen and save to desktop",
-          "action": "[action: takeScreenshot, savePath: {{user.desktop}}]"
-        },
-        {
-          "user": "take a screenshot and open it in VS Code",
-          "action": "[action: takeScreenshot, savePath: {{user.desktop}}, filename: screenshot.png, openWith: code]"
-        },
-        {
-          "user": "screenshot and open with paint",
-          "action": "[action: takeScreenshot, savePath: {{user.desktop}}, openWith: mspaint]"
-        },
-        {
-          "user": "take a screenshot and open it with the default app",
-          "action": "[action: takeScreenshot, savePath: {{user.desktop}}, openWith: default]"
-        }
-      ],
-      "hash": "2572f2bad42179b8",
-      "file": "take-screenshot.js",
-      "path": "capabilities/take-screenshot.js",
-      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/take-screenshot.js"
     },
     {
       "name": "wifiPasswords",
