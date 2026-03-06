@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-05T16:15:45.116Z",
+  "generated": "2026-03-06T20:06:11.374Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -8,7 +8,7 @@
     {
       "name": "convertCurrency",
       "description": "Converts an amount from one currency to another using live exchange rates. Provide the amount, source currency code (e.g. USD), and target currency code (e.g. EUR).",
-      "version": "1.0.6",
+      "version": "1.0.7",
       "returnType": "data",
       "tags": [
         "currency",
@@ -37,7 +37,7 @@
       "dependencies": [
         "axios@1.7.9"
       ],
-      "hash": "1fe3c51b6157cfd9",
+      "hash": "cbad3384e70b884f",
       "file": "currency-convert.js",
       "path": "capabilities/currency-convert.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/currency-convert.js"
@@ -92,7 +92,7 @@
     {
       "name": "getWeather",
       "description": "Opens a live Google weather search in the browser for a given city or location. Use when the user asks about the current weather, temperature, forecast, or conditions for any place. Accepts an optional location; defaults to generic weather if none is given.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "returnType": "action",
       "tags": [
         "weather",
@@ -107,7 +107,7 @@
           "action": "[action: getWeather, location: London]"
         }
       ],
-      "hash": "8e46f36ef0b15b44",
+      "hash": "21743785bb5a6cb0",
       "file": "get-weather.js",
       "path": "capabilities/get-weather.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/get-weather.js"
@@ -115,12 +115,12 @@
     {
       "name": "getInstalledApps",
       "description": "Scans the Windows registry and returns up to 50 installed programs with their name, version, and publisher. Use when the user asks what software is installed, whether a specific program exists on the PC, or wants a list of installed applications.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "returnType": "data",
       "tags": [
-        "app",
-        "installed",
-        "list"
+        "system",
+        "apps",
+        "installed"
       ],
       "ui": "card-list",
       "marker": "silently",
@@ -131,7 +131,7 @@
           "action": "[action: getInstalledApps]"
         }
       ],
-      "hash": "3a13424b6468b86b",
+      "hash": "71a92fe69acf4c2f",
       "file": "installed-apps.js",
       "path": "capabilities/installed-apps.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/installed-apps.js"
@@ -186,8 +186,8 @@
     {
       "name": "quickNote",
       "description": "Persistently saves and retrieves short text notes using the memory system. Supports five operations: add (save a new note), list (show all notes), search (find notes by keyword), delete (remove a note by index), clear (wipe all notes). Use whenever the user wants to save, recall, find, or delete a note or reminder.",
-      "version": "1.0.3",
-      "returnType": "hybrid",
+      "version": "1.0.4",
+      "returnType": "memory",
       "tags": [
         "note",
         "memo",
@@ -208,7 +208,7 @@
           "action": "[action: quickNote, operation: list]"
         }
       ],
-      "hash": "fbedfdcdf1ea51a8",
+      "hash": "3e5264fdf4cecbc1",
       "file": "quick-note.js",
       "path": "capabilities/quick-note.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/quick-note.js"
@@ -298,16 +298,14 @@
     },
     {
       "name": "takeScreenshot",
-      "description": "Takes a full-desktop screenshot and saves it as a PNG file. savePath defaults to the user's Desktop. filename defaults to screenshot.png. openWith defaults to 'mspaint' (Microsoft Paint) — always pass openWith: mspaint unless the user says otherwise. Use whenever the user asks to take, capture, or save a screenshot of their screen or desktop; or asks to open a screenshot in Paint or any other application.",
-      "version": "1.0.4",
+      "description": "Takes a full-desktop screenshot and saves it as a PNG file, then optionally opens it in an application. Use when the user asks to capture, take, or save a screenshot of their screen. Accepts an optional save folder (defaults to Desktop), filename, and app to open the file with.",
+      "version": "1.0.5",
       "returnType": "action",
       "tags": [
         "screenshot",
         "capture",
         "screen",
-        "desktop",
-        "image",
-        "paint"
+        "image"
       ],
       "ui": null,
       "marker": "announce",
@@ -315,7 +313,15 @@
       "examples": [
         {
           "user": "take a screenshot",
-          "action": "[action: takeScreenshot, openWith: mspaint]"
+          "action": "[action: takeScreenshot]"
+        },
+        {
+          "user": "capture my screen",
+          "action": "[action: takeScreenshot]"
+        },
+        {
+          "user": "take a screenshot and open it",
+          "action": "[action: takeScreenshot, openWith: default]"
         },
         {
           "user": "take a screenshot and open it in Paint",
@@ -326,22 +332,31 @@
           "action": "[action: takeScreenshot, openWith: mspaint]"
         },
         {
-          "user": "take a screenshot and save it to my desktop and open it in Paint",
-          "action": "[action: takeScreenshot, savePath: C:\\Users\\username\\Desktop, openWith: mspaint]"
+          "user": "take a screenshot and save it to my desktop",
+          "action": "[action: takeScreenshot]"
+        },
+        {
+          "user": "take a screenshot, save it to my desktop and open it in Paint",
+          "action": "[action: takeScreenshot, openWith: mspaint]"
+        },
+        {
+          "user": "take a screenshot and save it to my Documents folder",
+          "action": "[action: takeScreenshot, savePath: {{user.documents}}]"
         },
         {
           "user": "take a screenshot and save it to my Documents folder and open it in Paint",
-          "action": "[action: takeScreenshot, savePath: C:\\Users\\username\\Documents, openWith: mspaint]"
+          "action": "[action: takeScreenshot, savePath: {{user.documents}}, openWith: mspaint]"
         },
         {
-          "user": "capture my screen",
-          "action": "[action: takeScreenshot, openWith: mspaint]"
+          "user": "take a screenshot and save it to my downloads folder",
+          "action": "[action: takeScreenshot, savePath: {{user.downloads}}]"
+        },
+        {
+          "user": "take a screenshot and save it to my pictures",
+          "action": "[action: takeScreenshot, savePath: {{user.pictures}}]"
         }
       ],
-      "dependencies": [
-        "zod"
-      ],
-      "hash": "f6a6ce9b6cbc2cfc",
+      "hash": "459739f81c4826ba",
       "file": "take-screenshot.js",
       "path": "capabilities/take-screenshot.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/take-screenshot.js"
