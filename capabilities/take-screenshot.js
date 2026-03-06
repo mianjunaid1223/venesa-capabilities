@@ -1,229 +1,189 @@
-"use strict";
-
 /**
  * ═══════════════════════════════════════════════════════════════
- *  capability: take-screenshot
- *  Captures the primary display and saves it as a PNG, then
- *  optionally opens the file in a chosen application.
+ *  SKILL: take-screenshot
+ *  Capture screen, save to a configurable path, open with any app.
  * ═══════════════════════════════════════════════════════════════
  */
 
 const { z } = require("zod");
-const { execFile } = require("child_process");
-const fs = require("fs");
 const path = require("path");
-const os = require("os");
+const fs = require("fs");
+const {
+  HOME_DIR,
+  runPowerShell,
+  escapeForPowerShell,
+  logger,
+} = require("./_shared");
 
-function runPowerShellFile(script, timeoutMs) {
-  return new Promise((resolve, reject) => {
-    const tmpFile = path.join(os.tmpdir(), `venesa_ss_${Date.now()}.ps1`);
-    try {
-      fs.writeFileSync(tmpFile, script, "utf8");
-    } catch (e) {
-      return reject(new Error("Could not write temp PS1 file: " + e.message));
-    }
-
-    execFile(
-      "powershell",
-      [
-        "-NoProfile",
-        "-NonInteractive",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        tmpFile,
-      ],
-      { timeout: timeoutMs || 30000 },
-      (err, stdout, stderr) => {
-        try {
-          fs.unlinkSync(tmpFile);
-        } catch (_) {}
-        if (err) return reject(new Error(stderr.trim() || err.message));
-        resolve(stdout.trim());
-      },
-    );
-  });
+// Normalise openWith aliases to a stable executable/command name
+function resolveOpenWith(raw) {
+  if (!raw) return null;
+  const v = raw.trim().toLowerCase();
+  if (v === "default") return "default";
+  if (
+    v === "code" ||
+    v === "vscode" ||
+    v === "vs code" ||
+    v === "visual studio code"
+  )
+    return "code";
+  if (v === "mspaint" || v === "paint" || v === "ms paint") return "mspaint";
+  if (v === "notepad") return "notepad";
+  if (v === "photos" || v === "microsoft photos") return "ms-photos:";
+  return raw.trim(); // pass through as-is
 }
 
 module.exports = {
-  name: "takeScreenshot",
-  description:
-    "Takes a full-desktop screenshot and saves it as a PNG file, then optionally opens it in an application. Use when the user asks to capture, take, or save a screenshot of their screen. Accepts an optional save folder (defaults to Desktop), filename, and app to open the file with.",
-
-  returnType: "action",
-  marker: "announce",
-  tags: ["screenshot", "capture", "screen", "image"],
   schema: z.object({
     savePath: z
       .string()
-      .default("{{user.desktop}}")
+      .optional()
       .describe(
-        "Folder path to save the screenshot. Defaults to {{user.desktop}}. Supports tokens: {{user.desktop}}, {{user.documents}}, {{user.downloads}}, {{user.pictures}}.",
+        "Directory to save the screenshot. Defaults to ~/Pictures/Screenshots. Use {{user.desktop}} for Desktop.",
       ),
     filename: z
       .string()
       .optional()
-      .describe("Filename including .png extension. Defaults to 'screenshot.png'."),
+      .describe(
+        "Filename for the screenshot (include .png). Defaults to screenshot_<timestamp>.png.",
+      ),
     openWith: z
       .string()
       .optional()
       .describe(
-        "App to open the saved file with. Use 'default' for the system default image viewer, or a specific executable name like 'mspaint'. Omit entirely if the user did not ask to open the file.",
+        "App to open the file after saving. Use: default | code | mspaint | notepad | or any executable name.",
       ),
   }),
+  name: "takeScreenshot",
+  description:
+    "Take a full-screen screenshot. Can save to any path (default: ~/Pictures/Screenshots), use a custom filename, and open the result with any application, based on what user wants",
+  tags: ["screen", "screenshot", "capture"],
+
+  returnType: "action",
+  marker: "announce",
+  ui: null,
 
   examples: [
+    { user: "take a screenshot", action: "[action: takeScreenshot]" },
     {
-      user: "take a screenshot",
-      action: "[action: takeScreenshot]",
+      user: "capture my screen and save to desktop",
+      action: "[action: takeScreenshot, savePath: {{user.desktop}}]",
     },
     {
-      user: "capture my screen",
-      action: "[action: takeScreenshot]",
+      user: "take a screenshot and open it in VS Code",
+      action:
+        "[action: takeScreenshot, savePath: {{user.desktop}}, filename: screenshot.png, openWith: code]",
     },
     {
-      user: "take a screenshot and open it",
-      action: "[action: takeScreenshot, openWith: default]",
+      user: "screenshot and open with paint",
+      action:
+        "[action: takeScreenshot, savePath: {{user.desktop}}, openWith: mspaint]",
     },
     {
-      user: "take a screenshot and open it in Paint",
-      action: "[action: takeScreenshot, openWith: mspaint]",
-    },
-    {
-      user: "take a screenshot and open it in Microsoft Paint",
-      action: "[action: takeScreenshot, openWith: mspaint]",
-    },
-    {
-      user: "take a screenshot and save it to my desktop",
-      action: "[action: takeScreenshot]",
-    },
-    {
-      user: "take a screenshot, save it to my desktop and open it in Paint",
-      action: "[action: takeScreenshot, openWith: mspaint]",
-    },
-    {
-      user: "take a screenshot and save it to my Documents folder",
-      action: "[action: takeScreenshot, savePath: {{user.documents}}]",
-    },
-    {
-      user: "take a screenshot and save it to my Documents folder and open it in Paint",
-      action: "[action: takeScreenshot, savePath: {{user.documents}}, openWith: mspaint]",
-    },
-    {
-      user: "take a screenshot and save it to my downloads folder",
-      action: "[action: takeScreenshot, savePath: {{user.downloads}}]",
-    },
-    {
-      user: "take a screenshot and save it to my pictures",
-      action: "[action: takeScreenshot, savePath: {{user.pictures}}]",
+      user: "take a screenshot and open it with the default app",
+      action:
+        "[action: takeScreenshot, savePath: {{user.desktop}}, openWith: default]",
     },
   ],
 
   async handler(params) {
+    const saveDir =
+      params && params.savePath
+        ? params.savePath
+        : path.join(HOME_DIR, "Pictures", "Screenshots");
+
+    const filename =
+      params && params.filename
+        ? params.filename
+        : `screenshot_${Date.now()}.png`;
+
     try {
-      const folder = params.savePath.trim();
+      if (!fs.existsSync(saveDir)) {
+        fs.mkdirSync(saveDir, { recursive: true });
+      }
+    } catch (err) {
+      logger.error(
+        `[screenshot] Failed to create directory ${saveDir}: ${err?.message ?? String(err)}`,
+      );
+      return JSON.stringify({
+        error: `Failed to create screenshot directory: ${err?.message ?? String(err)}`,
+      });
+    }
 
-      const rawName =
-        params.filename && params.filename.trim()
-          ? params.filename.trim()
-          : "screenshot.png";
+    const screenshotPath = path.join(saveDir, filename);
+    const openWith = resolveOpenWith(params && params.openWith);
 
-      const safeFilename = rawName.toLowerCase().endsWith(".png")
-        ? rawName
-        : rawName + ".png";
+    // Delay 300ms so voice overlay isn't captured
+    await new Promise((r) => setTimeout(r, 300));
 
-      const fullPath = path.join(folder, safeFilename);
-
-      const captureScript = `
+    const psScript = `
+param($SafePath)
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-Add-Type -TypeDefinition @"
-using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Windows.Forms;
+$left   = [System.Windows.Forms.SystemInformation]::VirtualScreen.Left
+$top    = [System.Windows.Forms.SystemInformation]::VirtualScreen.Top
+$width  = [System.Windows.Forms.SystemInformation]::VirtualScreen.Width
+$height = [System.Windows.Forms.SystemInformation]::VirtualScreen.Height
 
-public class VenesaScreenCapture {
-    public static string Capture(string outputPath) {
+$bitmap = New-Object System.Drawing.Bitmap($width, $height)
+$graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+$graphics.CopyFromScreen($left, $top, 0, 0, (New-Object System.Drawing.Size($width, $height)))
+
+$bitmap.Save($SafePath, [System.Drawing.Imaging.ImageFormat]::Png)
+
+# Copy to clipboard via STA thread (Clipboard requires STA)
+# Clone the bitmap so the thread owns a separate copy and we can safely
+# dispose the original after saving without racing the clipboard write.
+$clipSuccess = $false
+try {
+    $bitmapClone = $bitmap.Clone()
+    $thread = New-Object System.Threading.Thread([System.Threading.ThreadStart]{
         try {
-            Rectangle bounds = Screen.PrimaryScreen.Bounds;
-            using (Bitmap bmp = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb)) {
-                using (Graphics g = Graphics.FromImage(bmp)) {
-                    g.CopyFromScreen(bounds.Location, System.Drawing.Point.Empty, bounds.Size, CopyPixelOperation.SourceCopy);
-                }
-                string dir = System.IO.Path.GetDirectoryName(outputPath);
-                if (!System.IO.Directory.Exists(dir)) {
-                    System.IO.Directory.CreateDirectory(dir);
-                }
-                bmp.Save(outputPath, ImageFormat.Png);
-            }
-            return "OK";
-        } catch (Exception ex) {
-            return "ERR:" + ex.Message;
+            [System.Windows.Forms.Clipboard]::SetImage($bitmapClone)
+            $script:clipSuccess = $true
+            $bitmapClone.Dispose()
+        } catch {
+            $script:clipSuccess = $false
+            try { $bitmapClone.Dispose() } catch { }
         }
-    }
+    })
+    $thread.SetApartmentState([System.Threading.ApartmentState]::STA)
+    $thread.Start()
+    $joined = $thread.Join(5000)
+    if (-not $joined) { $clipSuccess = $false }
+} catch {
+    $clipSuccess = $false
 }
-"@ -ReferencedAssemblies System.Windows.Forms, System.Drawing
 
-$result = [VenesaScreenCapture]::Capture('${fullPath.replace(/'/g, "''")}') 
-Write-Output $result
-`.trim();
+# The original bitmap and graphics can be disposed immediately since
+# the thread works on a clone ($bitmapClone) that it disposes itself.
+$graphics.Dispose()
+$bitmap.Dispose()
 
-      const result = await runPowerShellFile(captureScript, 25000);
+@{ success = $true; path = $SafePath; clipboard = $clipSuccess } | ConvertTo-Json -Compress
+`;
 
-      if (!result.startsWith("OK")) {
-        return {
-          success: false,
-          error: `Screenshot capture failed. Detail: ${result.replace(/^ERR:/, "")}`,
-        };
+    // Build optional open-with script fragment
+    let openScript = "";
+    if (openWith) {
+      const safeApp = escapeForPowerShell(openWith);
+      if (openWith === "default") {
+        openScript = `\nInvoke-Item $SafePath`;
+      } else if (openWith === "ms-photos:") {
+        // Microsoft Photos uses a URI protocol
+        openScript = `\nStart-Process ('ms-photos:' + $SafePath)`;
+      } else {
+        openScript = `\nStart-Process '${safeApp}' -ArgumentList $SafePath`;
       }
+    }
 
-      if (!fs.existsSync(fullPath)) {
-        return {
-          success: false,
-          error: `Screenshot was reported saved but the file was not found at '${fullPath}'.`,
-        };
-      }
+    const fullScript = psScript + openScript;
 
-      const openWith = params.openWith && params.openWith.trim()
-        ? params.openWith.trim()
-        : null;
-
-      let message = `Screenshot saved to '${fullPath}'.`;
-
-      if (openWith) {
-        // Escape fullPath for PowerShell single-quoted string (double each ')
-        const psFullPath = fullPath.replace(/'/g, "''");
-        // Escape openWith for PowerShell double-quoted string (backtick then quote)
-        const psOpenWith = openWith.replace(/`/g, "``").replace(/"/g, '`"');
-
-        const openScript = openWith === "default"
-          ? `Start-Process '${psFullPath}'`
-          : `Start-Process -FilePath "${psOpenWith}" -ArgumentList '"${psFullPath.replace(/"/g, '`"')}"'`;
-
-        try {
-          await runPowerShellFile(openScript, 10000);
-          const appLabel = openWith === "default" ? "the default image viewer"
-            : openWith === "mspaint" ? "Microsoft Paint"
-            : openWith;
-          message = `Screenshot saved to '${fullPath}' and opened in ${appLabel}.`;
-        } catch (openErr) {
-          return {
-            success: false,
-            error: `Screenshot was saved to '${fullPath}' but could not be opened with '${openWith}': ${openErr.message}`,
-            path: fullPath,
-          };
-        }
-      }
-
-      return {
-        success: true,
-        message,
-        path: fullPath,
-      };
-    } catch (err) {
-      return { success: false, error: err.message };
+    try {
+      return await runPowerShell(fullScript, [screenshotPath], 15000);
+    } catch (e) {
+      return JSON.stringify({ error: e?.message ?? String(e) });
     }
   },
 };

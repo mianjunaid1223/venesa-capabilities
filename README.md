@@ -47,13 +47,13 @@ const { z } = require("zod");
 
 module.exports = {
   name: "example",
-  description: "Example Venesa capability.",
+  description: "Returns the provided query string as-is. Use as a minimal capability template.",
   returnType: "data",
   marker: "silently",
   tags: ["example"],
 
   schema: z.object({
-    query: z.string().trim().min(1).describe("Input query."),
+    query: z.string().trim().min(1).describe("Input query string."),
   }),
 
   async handler({ query }) {
@@ -82,18 +82,55 @@ The architecture guarantees isolation; failed executions will be trapped and res
 
 | Field          | Required | Type        | Description                                                  |
 | -------------- | -------- | ----------- | ------------------------------------------------------------ |
-| `name`         | ✅       | `string`    | Unique camelCase identifier. Token name in `[action: name]`. |
-| `description`  | ✅       | `string`    | Injected verbatim into LLM prompt. Be precise.               |
+| `name`         | ✅       | `string`    | Unique camelCase identifier. Matches filename in camelCase (e.g. `get-weather.js` → `getWeather`). |
+| `description`  | ✅       | `string`    | Injected verbatim into the LLM system prompt. See **Description Rules** below. |
 | `returnType`   | ✅       | `string`    | `data` \| `action` \| `ui` \| `memory` \| `hybrid`           |
-| `schema`       | ✅       | `ZodObject` | Zod schema for all params. Validated before handler runs.    |
-| `handler`      | ✅       | `async fn`  | `async (validatedParams) => result`. Never throw unhandled.  |
-| `marker`       | —        | `string`    | `silently` \| `announce` \| `confirm`                        |
-| `ui`           | —        | `string`    | `table` \| `key-value` \| `card-list` \| `command-list`      |
-| `tags`         | —        | `string[]`  | Discovery tags for the community browser.                    |
-| `config`       | —        | `object`    | Static config (Zod schema).                                  |
+| `schema`       | ✅       | `ZodObject` | `z.object({...})`. Every field must have `.describe("...")`. No bare `z.any()`. |
+| `handler`      | ✅       | `async fn`  | `async (validatedParams) => { success, result }`. Never throw. Always wrapped in `try/catch`. |
+| `marker`       | —        | `string`    | `silently` \| `announce` \| `confirm`. See **Marker Defaults** below. |
+| `tags`         | —        | `string[]`  | Lowercase. Shared vocabulary across similar capabilities (e.g. `system`, `web`, `apps`, `network`). |
+| `dependencies` | —        | `string[]`  | Exact npm specifiers only. No ranges (`^`, `~`, `>=`, `*`). No git/http/file URLs. |
 | `lifecycle`    | —        | `object`    | `onLoad`, `onUnload`, `onEnable`, `onDisable` hooks.         |
-| `enabled`      | —        | `boolean`   | Default `true`. Set to `false` to ship disabled.             |
-| `dependencies` | —        | `string[]`  | Exact npm specifiers. No ranges. No git/http/file.           |
+| `ui`           | —        | `string`    | `table` \| `key-value` \| `card-list` \| `command-list`      |
+
+---
+
+## Description Rules
+
+The `description` is injected verbatim into the LLM system prompt. The model reads it to decide **when** to invoke this capability and **what to pass**. Write it to answer three things in one to two sentences:
+
+1. **What it does** — the concrete action or data it produces.
+2. **When to use it** — the user intent that should trigger it.
+3. **What it needs** — the required inputs, briefly.
+
+**Good:**
+> "Fetches a 5-day weather forecast for a given city. Use when the user asks about weather, temperature, or conditions in any location. Requires a city name."
+
+**Bad:**
+> "Gets weather." — too vague; AI cannot reliably decide when or how to call it.
+
+> "This capability allows Venesa to retrieve current and forecasted meteorological data from a remote API endpoint and..." — too long; wastes token budget.
+
+**Rules:**
+- Present tense. No "this capability", "this skill", "this module".
+- No mention of internal implementation details unless they directly affect usage.
+- No filler. Every word must earn its place.
+
+---
+
+## Marker Defaults
+
+The `marker` field controls user-facing feedback before and after handler execution.
+
+| returnType / Behavior                               | Default marker |
+| --------------------------------------------------- | -------------- |
+| `data` — read/query, returns data to reason about   | `silently`     |
+| `action` — non-destructive, no visible side effect  | `silently`     |
+| `action` — visible side effect (launch app, open URL, send message) | `announce` |
+| `action` — destructive (delete, wipe, shutdown, close all) | `confirm` |
+| `ui` — renders structured output                    | `silently`     |
+
+When no `marker` is set the platform infers one from `returnType`. Explicitly set `marker` whenever the inferred default would mislead the user.
 
 ## Schema Declaration
 
@@ -166,15 +203,15 @@ Capabilities can supply external variable structures via `config`, using the Zod
 
 ## Handling Outputs
 
-The `returnType` delineates to the LLM the behavioral path required post-execution.
+`returnType` tells the orchestrator and the LLM how to treat the handler result.
 
-| Type     | Behavioral Model                                                                                                                                                                                                                                            |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `data`   | The AI suspends process threads awaiting response structures before formulation.                                                                                                                                                                            |
-| `action` | Dispatches instructions silently by default. When a visibility marker (`announce` or `confirm`) is set, confirmations or UI feedback are emitted; otherwise no user-facing output is produced. Returns confirmation metadata only when markers are present. |
-| `ui`     | Forwards execution payload straight to the user-interface dispatcher.                                                                                                                                                                                       |
-| `memory` | Manipulates internal context variables without exposing events.                                                                                                                                                                                             |
-| `hybrid` | Execution response dictates adaptive behavior across the platform.                                                                                                                                                                                          |
+| Type     | When to use                                                                 |
+| -------- | --------------------------------------------------------------------------- |
+| `data`   | Read/query operations that return information the AI should reason about.   |
+| `action` | System mutations: launching apps, writing files, sending messages, etc.     |
+| `ui`     | Structured output rendered as a list, table, or card for the user.          |
+| `memory` | Context or note manipulation — reads/writes the AI's persistent memory.     |
+| `hybrid` | Mixed behaviour where the result drives both data reasoning and a UI render. |
 
 ## DEP ENGINE — Isolated Dependencies
 
@@ -213,6 +250,58 @@ dependencies: ['<dep_name>@1.7.9', 'cheerio@1.0.0'],
 **Prefer pinned versions** (`"pkg@x.y.z"`) to guarantee reproducible installs. Simply `require('<dep_name>')` in your handler — the platform resolves from the capability-local `node_modules` automatically.
 
 > **Corrupted state:** If a dependency fails to install 5 consecutive times, the capability is marked corrupted in the UI and will not load. Fix the dependency spec and publish a new version to clear the flag.
+
+## Token System
+
+Venesa resolves `{{token}}` placeholders in all string parameters **before** the handler runs. Capabilities do not implement this — the platform orchestrator handles it automatically.
+
+### Available Tokens
+
+| Token | Resolves to |
+|---|---|
+| `{{user.home}}` | User home directory |
+| `{{user.desktop}}` | Desktop folder |
+| `{{user.downloads}}` | Downloads folder |
+| `{{user.documents}}` | Documents folder |
+| `{{user.name}}` | User's display name (from Settings, not the OS username) |
+| `{{clipboard.text}}` | Current clipboard text |
+| `{{system.date}}` | Current local date |
+| `{{system.time}}` | Current local time |
+| `{{runtime.temp}}` | System temp directory |
+| `{{system.hostname}}` | Machine hostname |
+| `{{env.KEY_NAME}}` | Value of a custom key saved in **Settings → Custom Keys**. If the key is not saved, execution pauses and the user is prompted to add it before retrying. Use for API keys and secrets. **Not available for LLM-generated parameters.** |
+
+### Rules for capability authors
+
+1. **Document token support in `.describe()`** — If a param accepts a path or dynamic value, tell the LLM which tokens apply.
+2. **Never resolve tokens manually** — Do not call `os.homedir()`, `os.userInfo()`, or read `process.env` to replicate what tokens already provide. Accept the param as a string and use it directly.
+3. **Never hardcode paths** — Instead of `path.join(os.homedir(), 'Desktop')`, expose an optional param with a default of `{{user.desktop}}`.
+
+### API Keys via `{{env.*}}`
+
+Declare each required key as a hidden schema field with `z.string().default("{{env.KEY_NAME}}")`. The platform resolves it before your handler runs. Do **not** add `.describe()` to key fields — they should be invisible to the LLM.
+
+```javascript
+schema: z.object({
+  // LLM-supplied param
+  city: z.string().describe("City name to fetch weather for"),
+
+  // Hidden key param — platform resolves from Settings → Custom Keys
+  apiKey: z.string().default("{{env.OPENWEATHER_KEY}}"),
+}),
+```
+
+### Documenting tokens in `.describe()`
+
+```javascript
+schema: z.object({
+  savePath: z.string().optional().describe(
+    "Output folder. Defaults to {{user.desktop}}. Supports tokens: {{user.desktop}}, {{user.documents}}, {{user.downloads}}"
+  ),
+}),
+```
+
+---
 
 ## NET GUARD — Network Offline Handling
 
