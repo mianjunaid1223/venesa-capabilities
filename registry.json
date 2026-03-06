@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-06T20:06:11.374Z",
+  "generated": "2026-03-06T20:20:38.354Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -298,14 +298,13 @@
     },
     {
       "name": "takeScreenshot",
-      "description": "Takes a full-desktop screenshot and saves it as a PNG file, then optionally opens it in an application. Use when the user asks to capture, take, or save a screenshot of their screen. Accepts an optional save folder (defaults to Desktop), filename, and app to open the file with.",
-      "version": "1.0.5",
+      "description": "Take a full-screen screenshot. Can save to any path (default: ~/Pictures/Screenshots), use a custom filename, and open the result with any application, based on what user wants",
+      "version": "1.0.6",
       "returnType": "action",
       "tags": [
-        "screenshot",
-        "capture",
         "screen",
-        "image"
+        "screenshot",
+        "capture"
       ],
       "ui": null,
       "marker": "announce",
@@ -316,47 +315,23 @@
           "action": "[action: takeScreenshot]"
         },
         {
-          "user": "capture my screen",
-          "action": "[action: takeScreenshot]"
+          "user": "capture my screen and save to desktop",
+          "action": "[action: takeScreenshot, savePath: {{user.desktop}}]"
         },
         {
-          "user": "take a screenshot and open it",
-          "action": "[action: takeScreenshot, openWith: default]"
+          "user": "take a screenshot and open it in VS Code",
+          "action": "[action: takeScreenshot, savePath: {{user.desktop}}, filename: screenshot.png, openWith: code]"
         },
         {
-          "user": "take a screenshot and open it in Paint",
-          "action": "[action: takeScreenshot, openWith: mspaint]"
+          "user": "screenshot and open with paint",
+          "action": "[action: takeScreenshot, savePath: {{user.desktop}}, openWith: mspaint]"
         },
         {
-          "user": "take a screenshot and open it in Microsoft Paint",
-          "action": "[action: takeScreenshot, openWith: mspaint]"
-        },
-        {
-          "user": "take a screenshot and save it to my desktop",
-          "action": "[action: takeScreenshot]"
-        },
-        {
-          "user": "take a screenshot, save it to my desktop and open it in Paint",
-          "action": "[action: takeScreenshot, openWith: mspaint]"
-        },
-        {
-          "user": "take a screenshot and save it to my Documents folder",
-          "action": "[action: takeScreenshot, savePath: {{user.documents}}]"
-        },
-        {
-          "user": "take a screenshot and save it to my Documents folder and open it in Paint",
-          "action": "[action: takeScreenshot, savePath: {{user.documents}}, openWith: mspaint]"
-        },
-        {
-          "user": "take a screenshot and save it to my downloads folder",
-          "action": "[action: takeScreenshot, savePath: {{user.downloads}}]"
-        },
-        {
-          "user": "take a screenshot and save it to my pictures",
-          "action": "[action: takeScreenshot, savePath: {{user.pictures}}]"
+          "user": "take a screenshot and open it with the default app",
+          "action": "[action: takeScreenshot, savePath: {{user.desktop}}, openWith: default]"
         }
       ],
-      "hash": "459739f81c4826ba",
+      "hash": "2572f2bad42179b8",
       "file": "take-screenshot.js",
       "path": "capabilities/take-screenshot.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/take-screenshot.js"
