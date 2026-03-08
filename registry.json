@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-08T02:08:44.894Z",
+  "generated": "2026-03-08T04:38:09.824Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
@@ -44,7 +44,7 @@
     {
       "name": "getDiskInfo",
       "description": "Shows all fixed drives (C:, D:, etc...) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "returnType": "data",
       "tags": [
         "system",
@@ -59,7 +59,7 @@
           "action": "[action: getDiskInfo]"
         }
       ],
-      "hash": "6ec5671577048a40",
+      "hash": "b6483d6e43845e93",
       "file": "disk-info.js",
       "path": "capabilities/disk-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/disk-info.js"
@@ -67,7 +67,7 @@
     {
       "name": "getTime",
       "description": "Returns the current local time and full date including day of the week. Use when the user asks what time it is, today's date, what day it is, or any question about the current moment.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "returnType": "data",
       "tags": [
         "time",
@@ -81,7 +81,7 @@
           "action": "[action: getTime]"
         }
       ],
-      "hash": "95be01e2a0d9f572",
+      "hash": "0569f698f002157e",
       "file": "get-time.js",
       "path": "capabilities/get-time.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/get-time.js"
@@ -89,7 +89,7 @@
     {
       "name": "getWeather",
       "description": "Opens a live Google weather search in the browser for a given city or location. Use when the user asks about the current weather, temperature, forecast, or conditions for any place. Accepts an optional location; defaults to generic weather if none is given.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "returnType": "action",
       "tags": [
         "weather",
@@ -103,7 +103,7 @@
           "action": "[action: getWeather, location: London]"
         }
       ],
-      "hash": "21743785bb5a6cb0",
+      "hash": "f1e9d3d4a9843a3a",
       "file": "get-weather.js",
       "path": "capabilities/get-weather.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/get-weather.js"
@@ -261,14 +261,14 @@
     {
       "name": "getSystemInfo",
       "description": "Reports a real-time snapshot of system health: current CPU load percentage, RAM used vs total in GB, battery charge percentage (or N/A on desktops), and how long the system has been running since last reboot. Use when the user asks how the PC is performing, checks battery level, asks about RAM or CPU usage, or wants a general hardware status summary.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "returnType": "data",
       "tags": [
         "system",
         "info",
         "monitor"
       ],
-      "ui": "key-value",
+      "ui": null,
       "marker": "silently",
       "examples": [
         {
@@ -280,7 +280,7 @@
           "action": "[action: getSystemInfo]"
         }
       ],
-      "hash": "ab65c88c100795ef",
+      "hash": "1f2cf8b8b460f7e8",
       "file": "system-info.js",
       "path": "capabilities/system-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-info.js"
@@ -312,7 +312,7 @@
     {
       "name": "youtubeSearch",
       "description": "Opens the YouTube search results page in the default browser for a given search query. Use when the user asks to search, find, watch, or look up anything on YouTube. Requires a non-empty search query.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "returnType": "action",
       "tags": [
         "web",
@@ -328,7 +328,7 @@
           "action": "[action: youtubeSearch, query: lo-fi music]"
         }
       ],
-      "hash": "71bb0c441a73e4b4",
+      "hash": "29b0b10ba6496dde",
       "file": "youtube-search.js",
       "path": "capabilities/youtube-search.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/youtube-search.js"
