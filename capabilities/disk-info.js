@@ -40,7 +40,7 @@ module.exports = {
 
   async handler() {
     const psScript = `
-$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = 'SilentlyContinue'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 @(Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3" |
 Select-Object DeviceID,

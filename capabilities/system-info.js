@@ -33,7 +33,6 @@ module.exports = {
 
   returnType: "data",
   marker: "silently",
-  ui: "key-value",
 
   examples: [
     { user: "how is my PC doing", action: "[action: getSystemInfo]" },

@@ -17,7 +17,6 @@ module.exports = {
 
   returnType: "data",
   marker: "silently",
-  ui: null,
 
   examples: [{ user: "what time is it", action: "[action: getTime]" }],
 

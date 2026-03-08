@@ -20,7 +20,6 @@ module.exports = {
 
   returnType: "action",
   marker: "announce",
-  ui: null,
 
   examples: [
     {
