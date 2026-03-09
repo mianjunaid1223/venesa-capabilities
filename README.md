@@ -91,7 +91,7 @@ The architecture guarantees isolation; failed executions will be trapped and res
 | `tags`         | —        | `string[]`  | Lowercase. Shared vocabulary across similar capabilities (e.g. `system`, `web`, `apps`, `network`). |
 | `dependencies` | —        | `string[]`  | Exact npm specifiers only. No ranges (`^`, `~`, `>=`, `*`). No git/http/file URLs. |
 | `lifecycle`    | —        | `object`    | `onLoad`, `onUnload`, `onEnable`, `onDisable` hooks.         |
-| `ui`           | —        | `string`    | `table` \| `key-value` \| `card-list` \| `command-list`      |
+| `ui`           | —        | `string`    | `table` \| `key-value` \| `card-list` \| `command-list`. **Omit the field entirely when no UI hint is needed — `null` is not a valid value and will be ignored by the platform.** |
 
 ---
 
@@ -334,6 +334,24 @@ async handler(params) {
 ```
 
 Do **not** import connectivity modules from platform internals. The error-code pattern above is portable and requires no platform-specific imports.
+
+## Electron APIs
+
+Capabilities execute inside the Electron main process, so `require('electron')` is available and fully supported. Use it to access Electron APIs such as `shell.openExternal()`, `clipboard`, `dialog`, and others.
+
+```javascript
+async handler(params) {
+  try {
+    const { shell } = require('electron');
+    await shell.openExternal(`https://example.com?q=${encodeURIComponent(params.query)}`);
+    return { success: true, result: 'Opened in browser.' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+},
+```
+
+Capabilities remain self-contained — do **not** import from the Venesa application source (e.g. `src/lib/`, `src/brain/`). Only use Node built-ins, declared `dependencies`, and Electron's own API surface.
 
 ## Utilizing Lifecycles
 
