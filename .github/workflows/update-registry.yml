@@ -3,6 +3,8 @@ name: Update Registry
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - registry.json
   workflow_dispatch:
 
 permissions:
@@ -10,13 +12,13 @@ permissions:
 
 jobs:
   generate:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.REGISTRY_BOT_TOKEN }}
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -39,5 +41,5 @@ jobs:
             echo "registry.json unchanged — nothing to commit."
           else
             git commit -m "chore: update registry.json [skip ci]"
-            git push
+            git push origin HEAD:main
           fi
