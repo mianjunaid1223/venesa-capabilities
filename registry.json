@@ -1,9 +1,9 @@
 {
-  "generated": "2026-03-10T01:03:12.120Z",
+  "generated": "2026-04-18T20:56:59.505Z",
   "repository": "mianjunaid1223/venesa-capabilities",
   "branch": "main",
   "rawBase": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main",
-  "count": 13,
+  "count": 14,
   "capabilities": [
     {
       "name": "convertCurrency",
@@ -44,7 +44,7 @@
     {
       "name": "getDiskInfo",
       "description": "Shows all fixed drives (C:, D:, etc...) with total size, free space in GB, and usage percentage. Use when the user asks about disk space, storage capacity, how full a drive is, or whether they have enough space.",
-      "version": "1.0.4",
+      "version": "1.0.5",
       "returnType": "data",
       "tags": [
         "system",
@@ -59,7 +59,7 @@
           "action": "[action: getDiskInfo]"
         }
       ],
-      "hash": "b6483d6e43845e93",
+      "hash": "d5d1dc04e4beb813",
       "file": "disk-info.js",
       "path": "capabilities/disk-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/disk-info.js"
@@ -111,7 +111,7 @@
     {
       "name": "getInstalledApps",
       "description": "Scans the Windows registry and returns up to 50 installed programs with their name, version, and publisher. Use when the user asks what software is installed, whether a specific program exists on the PC, or wants a list of installed applications.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "returnType": "data",
       "tags": [
         "system",
@@ -126,7 +126,7 @@
           "action": "[action: getInstalledApps]"
         }
       ],
-      "hash": "71a92fe69acf4c2f",
+      "hash": "b747800d0efd12a5",
       "file": "installed-apps.js",
       "path": "capabilities/installed-apps.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/installed-apps.js"
@@ -134,7 +134,7 @@
     {
       "name": "getNetworkInfo",
       "description": "Returns all active network adapters and their IPv4 addresses. Use when the user asks for their IP address, which network or adapter they are connected to, their network speed, or wants to see connection details.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "returnType": "data",
       "tags": [
         "system",
@@ -149,7 +149,7 @@
           "action": "[action: getNetworkInfo]"
         }
       ],
-      "hash": "da93eacd9f0fdaa0",
+      "hash": "46d95e5b72bf0edc",
       "file": "network-info.js",
       "path": "capabilities/network-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/network-info.js"
@@ -157,7 +157,7 @@
     {
       "name": "listProcesses",
       "description": "Lists the top 10 processes consuming the most CPU, showing process ID, name, CPU time, and memory usage in bytes. Use when the user asks what is slowing the PC down, which processes are running, what is consuming CPU, or wants to identify resource hogs.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "returnType": "data",
       "tags": [
         "system",
@@ -171,7 +171,7 @@
           "action": "[action: listProcesses]"
         }
       ],
-      "hash": "e50ac21a3858a81f",
+      "hash": "4e388fa8670d4e70",
       "file": "processes.js",
       "path": "capabilities/processes.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/processes.js"
@@ -179,7 +179,7 @@
     {
       "name": "quickNote",
       "description": "Persistently saves and retrieves short text notes using the memory system. Supports five operations: add (save a new note), list (show all notes), search (find notes by keyword), delete (remove a note by index), clear (wipe all notes). Use whenever the user wants to save, recall, find, or delete a note or reminder.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "returnType": "memory",
       "tags": [
         "note",
@@ -200,15 +200,38 @@
           "action": "[action: quickNote, operation: list]"
         }
       ],
-      "hash": "3e5264fdf4cecbc1",
+      "hash": "eb8c8f99e5400986",
       "file": "quick-note.js",
       "path": "capabilities/quick-note.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/quick-note.js"
     },
     {
+      "name": "getRecentFiles",
+      "description": "Lists recently modified files in a folder. Use when the user asks for latest files in Documents, Downloads, Desktop, or a custom path.",
+      "version": "1.0.0",
+      "returnType": "data",
+      "tags": [
+        "files",
+        "recent",
+        "productivity"
+      ],
+      "ui": "table",
+      "marker": "silently",
+      "examples": [
+        {
+          "user": "show my latest documents",
+          "action": "[action: getRecentFiles]"
+        }
+      ],
+      "hash": "d1174845076b6130",
+      "file": "recent-files.js",
+      "path": "capabilities/recent-files.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/recent-files.js"
+    },
+    {
       "name": "listRunningApps",
       "description": "Lists all applications with a visible window currently open on the desktop, showing app name, window title, and memory usage in MB. Background services and system processes are excluded. Use when the user asks what apps or windows are open right now.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "returnType": "data",
       "tags": [
         "system",
@@ -223,15 +246,61 @@
           "action": "[action: listRunningApps]"
         }
       ],
-      "hash": "9dd7d673dbf267f5",
+      "hash": "d2b6c5a413bf4ccd",
       "file": "running-apps.js",
       "path": "capabilities/running-apps.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/running-apps.js"
     },
     {
+      "name": "getServiceStatus",
+      "description": "Checks Windows service status and returns matching services. Use when the user asks whether a service is running, stopped, or wants a quick service list.",
+      "version": "1.0.0",
+      "returnType": "data",
+      "tags": [
+        "services",
+        "windows",
+        "system"
+      ],
+      "ui": "table",
+      "marker": "silently",
+      "examples": [
+        {
+          "user": "is print spooler running",
+          "action": "[action: getServiceStatus serviceName='Spooler']"
+        }
+      ],
+      "hash": "510c2e768c30b3b9",
+      "file": "service-status.js",
+      "path": "capabilities/service-status.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/service-status.js"
+    },
+    {
+      "name": "getStartupApps",
+      "description": "Lists apps configured to run at Windows startup from registry and startup folders. Use when the user asks what launches on boot or wants startup troubleshooting.",
+      "version": "1.0.0",
+      "returnType": "data",
+      "tags": [
+        "startup",
+        "apps",
+        "system"
+      ],
+      "ui": "table",
+      "marker": "silently",
+      "examples": [
+        {
+          "user": "what starts when windows boots",
+          "action": "[action: getStartupApps]"
+        }
+      ],
+      "hash": "0c168a0730cca89d",
+      "file": "startup-apps.js",
+      "path": "capabilities/startup-apps.js",
+      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/startup-apps.js"
+    },
+    {
       "name": "systemCleaner",
       "description": "Frees up disk space by removing junk files from Windows Temp, System Temp, thumbnails, Chrome cache, and Edge cache. Three operations: scan (preview how much space can be recovered without deleting anything), clean (permanently delete the junk files and report freed MB), empty-recycle-bin (immediately empty the Recycle Bin). Use when the user wants to clean up, free space, or remove temporary files.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "returnType": "hybrid",
       "tags": [
         "clean",
@@ -253,7 +322,7 @@
           "action": "[action: systemCleaner, operation: empty-recycle-bin]"
         }
       ],
-      "hash": "1be40d6e537217b8",
+      "hash": "67f36ee0dea4f0d5",
       "file": "system-cleaner.js",
       "path": "capabilities/system-cleaner.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-cleaner.js"
@@ -261,7 +330,7 @@
     {
       "name": "getSystemInfo",
       "description": "Reports a real-time snapshot of system health: current CPU load percentage, RAM used vs total in GB, battery charge percentage (or N/A on desktops), and how long the system has been running since last reboot. Use when the user asks how the PC is performing, checks battery level, asks about RAM or CPU usage, or wants a general hardware status summary.",
-      "version": "1.0.4",
+      "version": "1.0.5",
       "returnType": "data",
       "tags": [
         "system",
@@ -280,58 +349,10 @@
           "action": "[action: getSystemInfo]"
         }
       ],
-      "hash": "1f2cf8b8b460f7e8",
+      "hash": "05ee4893cb6d0eb0",
       "file": "system-info.js",
       "path": "capabilities/system-info.js",
       "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/system-info.js"
-    },
-    {
-      "name": "wifiPasswords",
-      "description": "Retrieves saved WiFi network credentials stored on this Windows PC. Without a network name, returns a list of all saved networks and whether each has a password. With a network name, confirms whether a password is saved for that specific network. Passwords are returned redacted for security. Use when the user asks what WiFi networks are saved, or wants to check a saved network.",
-      "version": "1.0.3",
-      "returnType": "data",
-      "tags": [
-        "wifi",
-        "password",
-        "network",
-        "internet"
-      ],
-      "ui": "table",
-      "marker": "confirm",
-      "examples": [
-        {
-          "user": "show saved wifi passwords",
-          "action": "[action: wifiPasswords]"
-        }
-      ],
-      "hash": "1f6ff50fe8abed45",
-      "file": "wifi-passwords.js",
-      "path": "capabilities/wifi-passwords.js",
-      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/wifi-passwords.js"
-    },
-    {
-      "name": "youtubeSearch",
-      "description": "Opens the YouTube search results page in the default browser for a given search query. Use when the user asks to search, find, watch, or look up anything on YouTube. Requires a non-empty search query.",
-      "version": "1.0.4",
-      "returnType": "action",
-      "tags": [
-        "web",
-        "search",
-        "youtube",
-        "video"
-      ],
-      "ui": null,
-      "marker": "announce",
-      "examples": [
-        {
-          "user": "search YouTube for lo-fi music",
-          "action": "[action: youtubeSearch, query: lo-fi music]"
-        }
-      ],
-      "hash": "29b0b10ba6496dde",
-      "file": "youtube-search.js",
-      "path": "capabilities/youtube-search.js",
-      "url": "https://raw.githubusercontent.com/mianjunaid1223/venesa-capabilities/main/capabilities/youtube-search.js"
     }
   ]
 }
