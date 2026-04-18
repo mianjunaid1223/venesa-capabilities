@@ -13,12 +13,17 @@ const { execFile } = require("child_process");
 function runPowerShell(script, timeoutMs) {
   return new Promise((resolve, reject) => {
     execFile(
-      "powershell",
+      "powershell.exe",
       ["-NoProfile", "-NonInteractive", "-Command", script],
       { timeout: timeoutMs || 30000 },
-      (err, stdout) => {
-        if (err) return reject(err);
-        resolve(stdout.trim());
+      (err, stdout, stderr) => {
+        const out = String(stdout || "").trim();
+        if (out) {
+          resolve(out);
+          return;
+        }
+        const message = String(stderr || "").trim() || err?.message || "PowerShell command failed";
+        reject(new Error(message));
       }
     );
   });

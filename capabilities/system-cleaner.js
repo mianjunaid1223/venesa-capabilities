@@ -13,12 +13,17 @@ const { execFile } = require("child_process");
 function runPowerShell(script, timeoutMs) {
   return new Promise((resolve, reject) => {
     execFile(
-      "powershell",
+      "powershell.exe",
       ["-NoProfile", "-NonInteractive", "-Command", script],
       { timeout: timeoutMs || 30000 },
-      (err, stdout) => {
-        if (err) return reject(err);
-        resolve(stdout.trim());
+      (err, stdout, stderr) => {
+        const out = String(stdout || "").trim();
+        if (out) {
+          resolve(out);
+          return;
+        }
+        const message = String(stderr || "").trim() || err?.message || "PowerShell command failed";
+        reject(new Error(message));
       }
     );
   });
@@ -60,12 +65,19 @@ module.exports = {
 
       if (operation === "empty-recycle-bin") {
         const ps = `
+$ErrorActionPreference = 'Stop'
 try {
-    Clear-RecycleBin -Force -ErrorAction Stop
+    $cmd = Get-Command Clear-RecycleBin -ErrorAction SilentlyContinue
+    if ($cmd) {
+        Clear-RecycleBin -Force -ErrorAction Stop
+    } else {
+        throw 'Clear-RecycleBin is not available on this system.'
+    }
     @{ success = $true; action = 'Recycle bin emptied' } | ConvertTo-Json -Compress
 } catch {
     @{ success = $false; action = 'empty-recycle-bin'; error = $_.Exception.Message } | ConvertTo-Json -Compress
 }
+exit 0
 `;
         const rawRb = await runPowerShell(ps, 15000);
         const inner = JSON.parse(rawRb);
@@ -87,6 +99,7 @@ $targets = @(
         const ps =
           targetsBlock +
           `
+      $ErrorActionPreference = 'SilentlyContinue'
 $results = @()
 $totalSize = 0
 foreach ($t in $targets) {
@@ -99,6 +112,7 @@ foreach ($t in $targets) {
     }
 }
 @{ operation = 'scan'; targets = $results; totalRecoverableMB = [math]::Round($totalSize / 1MB, 2) } | ConvertTo-Json -Compress -Depth 3
+exit 0
 `;
         const rawScan = await runPowerShell(ps, 30000);
         return { success: true, result: JSON.parse(rawScan) };
@@ -108,6 +122,7 @@ foreach ($t in $targets) {
         const ps =
           targetsBlock +
           `
+      $ErrorActionPreference = 'SilentlyContinue'
 $deletedFiles = 0
 $freedBytes = 0
 foreach ($t in $targets) {
@@ -124,6 +139,7 @@ foreach ($t in $targets) {
     }
 }
 @{ operation = 'clean'; deletedFiles = $deletedFiles; freedMB = [math]::Round($freedBytes / 1MB, 2) } | ConvertTo-Json -Compress
+exit 0
 `;
         const rawClean = await runPowerShell(ps, 60000);
         return { success: true, result: JSON.parse(rawClean) };

@@ -18,7 +18,6 @@ module.exports = {
 
   returnType: "memory",
   marker: "silently",
-  ui: null,
 
   schema: z.object({
     operation: z
