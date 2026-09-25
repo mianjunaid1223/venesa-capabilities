@@ -1,5 +1,8 @@
 # Venesa Community Capability Repository
 
+[![Year Built](https://img.shields.io/badge/Year%20Built-2026-blue.svg)](#)
+
+
 Official registry of community capabilities for the [Venesa](https://github.com/mianjunaid1223/venesa) intelligence platform.
 
 ## What are Venesa Capabilities?
